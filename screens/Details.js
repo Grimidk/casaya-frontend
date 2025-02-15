@@ -65,22 +65,22 @@ export default function Details(){
         {/* Seccion facilidades */}
         <View style={styles.contenedorFacilities}>
           <View style={styles.card}>
-            <Icon name='car' type='font-awesome' size={20} color={"gray"} style={{marginTop10}}/>
+            <Icon name='car' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
             <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>Puestos</Text>
           </View>
 
           <View style={styles.card}>
-            <Icon name='camera' type='font-awesome' size={20} color={"gray"} style={{marginTop10}}/>
+            <Icon name='camera' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
             <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>CCTV</Text>
           </View>
 
           <View style={styles.card}>
-            <Icon name='user-secret' type='font-awesome' size={20} color={"gray"} style={{marginTop10}}/>
+            <Icon name='user-secret' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
             <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>Seguridad</Text>
           </View>
 
           <View style={styles.card}>
-            <Icon name='minus' type='font-awesome' size={20} color={"gray"} style={{marginTop10}}/>
+            <Icon name='minus' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
             <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>AC</Text>
           </View>
         </View>
