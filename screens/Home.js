@@ -11,9 +11,38 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import PropertyCard from '../components/PropertyCard'
 
 
 export default function Home(props)   {
+
+  const properties = [
+    {
+      id: 1,
+      image: require('../assets/image1.jpg'),
+      title: 'Casa en la playa',
+      price: '$500,000',
+      reviews: '4.8',
+      status: 'For Sale',
+       
+    },
+    {
+      id: 2,
+      image: require('../assets/image2.jpg'),
+      title: 'Apartamento en la ciudad',
+      price: '$300,000',
+      reviews: '4.5',
+      status: 'For Rent',
+    },
+    {
+      id: 3,
+      image: require('../assets/image3.jpg'),
+      title: 'Chalet en las montañas',
+      price: '$700,000',
+      reviews: '4.9',
+      status: 'For Sale',
+    },
+  ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <StatusBar
@@ -31,84 +60,27 @@ export default function Home(props)   {
 
       <View style={styles.inputContainer}>
         
-        <TextInput placeholder="espacio de busq" />
+        <TextInput placeholder="espacio de búsqueda" />
       </View>
 
       <Text style={styles.result}>50 Resultados Encontrados</Text>
       {/* la lista de las imagenes */}
       <ScrollView>
-        <TouchableOpacity style={styles.contenedorImage} 
-        onPress={()=>props.navigation.navigate('Detail')}>
-          
-          <ImageBackground source={require('../assets/image3.jpg')} 
-          style={styles.estiloImagenes} imageStyle={{borderRadius:20}} > 
-          {/* contenido dentro de la imagen */}
-            <Text style={styles.textoSale}>For Sale</Text>
+      
+        <View style={styles.container}>
+        {properties.map((property) => (
+          <PropertyCard
+            key={property.id}
+            image={property.image}
+            title={property.title}
+            price={property.price}
+            reviews={property.reviews}
+            status={property.status}
+            onPress={()=>props.navigation.navigate('Detail')}
+          />
+        ))}
+      </View>
 
-            <View style={styles.contenedorInfor}>
-              <View>
-                <Text style={styles.textoInfo}>Day House</Text>
-
-              </View>
-
-              <View>
-                <Text style={styles.textoInfo}>$3.500.00</Text>
-                <View style={styles.contenedorReview}>
-                  
-                  <Text style={styles.textoInfo}>4.5 Reviews</Text>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
-          
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.contenedorImage}>
-          <ImageBackground source={require('../assets/image1.jpg')} 
-          style={styles.estiloImagenes} 
-          imageStyle={{borderRadius:20}}> 
-            {/* contenido dentro de la imagen */}
-            <Text style={styles.textoSale}>For Sale</Text>
-            <View style={styles.contenedorInfor}>
-              <View>
-                <Text style={styles.textoInfo}>Bill House</Text>
-
-              </View>
-
-              <View>
-                <Text style={styles.textoInfo}>$2.500.00</Text>
-                <View style={styles.contenedorReview}>
-                  
-                  <Text style={styles.textoInfo}>4.2 Reviews</Text>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.contenedorImage}>
-          <ImageBackground source={require('../assets/image4.jpg')}
-           style={styles.estiloImagenes} 
-           imageStyle={{borderRadius:20}}> 
-           {/* contenido dentro de la imagen */}
-           <Text style={styles.textoSale}>For Sale</Text>
-
-           <View style={styles.contenedorInfor}>
-              <View>
-                <Text style={styles.textoInfo}>Clint Villa</Text>
-
-              </View>
-
-              <View>
-                <Text style={styles.textoInfo}>$5.500.00</Text>
-                <View style={styles.contenedorReview}>
-                  
-                  <Text style={styles.textoInfo}>4.0 Reviews</Text>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
-        </TouchableOpacity>
       </ScrollView>
 
     </SafeAreaView>
