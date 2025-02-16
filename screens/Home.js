@@ -11,9 +11,53 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import PropertyCard from '../components/PropertyCard'
 
 
-export default function Home(props)   {
+export default function Home({navigation})   {
+
+  const properties = [
+    {
+      id: 1,
+      image: require('../assets/image1.jpg'),
+      title: 'Casa en la playa',
+      price: '$500,000',
+      reviews: '4.8',
+      status: 'For Sale',
+      description: 'Casa lujosa en la playa con vista al mar.',
+      location: 'Playa',
+      bathrooms:'2',
+      rooms: '2',
+      parking:'1'
+       
+    },
+    {
+      id: 2,
+      image: require('../assets/image2.jpg'),
+      title: 'Apartamento en la ciudad',
+      price: '$300,000',
+      reviews: '4.5',
+      status: 'For Rent',
+      description: 'Apartamento moderno en el corazón de la ciudad.',
+      location: 'Ciudad',
+      bathrooms:'2',
+      rooms: '3',
+      parking:'1'
+    },
+    {
+      id: 3,
+      image: require('../assets/image3.jpg'),
+      title: 'Chalet en las montañas',
+      price: '$700,000',
+      reviews: '4.9',
+      status: 'For Sale',
+      description: 'Chalet acogedor en las montañas con vistas impresionantes.',
+      location: 'Montañas',
+      bathrooms:'3',
+      rooms: '4',
+      parking:'2'
+    },
+  ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <StatusBar
@@ -31,84 +75,32 @@ export default function Home(props)   {
 
       <View style={styles.inputContainer}>
         
-        <TextInput placeholder="espacio de busq" />
+        <TextInput placeholder="espacio de búsqueda" />
       </View>
 
       <Text style={styles.result}>50 Resultados Encontrados</Text>
       {/* la lista de las imagenes */}
       <ScrollView>
-        <TouchableOpacity style={styles.contenedorImage} 
-        onPress={()=>props.navigation.navigate('Detail')}>
-          
-          <ImageBackground source={require('../assets/image3.jpg')} 
-          style={styles.estiloImagenes} imageStyle={{borderRadius:20}} > 
-          {/* contenido dentro de la imagen */}
-            <Text style={styles.textoSale}>For Sale</Text>
+      
+        <View style={styles.container}>
+        {properties.map((property) => (
+          <PropertyCard
+            key={property.id}
+            image={property.image}
+            title={property.title}
+            price={property.price}
+            reviews={property.reviews}
+            status={property.status} 
+            description={property.description}
+            location={property.location}
+            bathrooms={property.bathrooms}
+            rooms={property.rooms}
+            parking={property.parking}
+            onPress={() => navigation.navigate('Details', { property })}
+          />
+        ))}
+      </View>
 
-            <View style={styles.contenedorInfor}>
-              <View>
-                <Text style={styles.textoInfo}>Day House</Text>
-
-              </View>
-
-              <View>
-                <Text style={styles.textoInfo}>$3.500.00</Text>
-                <View style={styles.contenedorReview}>
-                  
-                  <Text style={styles.textoInfo}>4.5 Reviews</Text>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
-          
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.contenedorImage}>
-          <ImageBackground source={require('../assets/image1.jpg')} 
-          style={styles.estiloImagenes} 
-          imageStyle={{borderRadius:20}}> 
-            {/* contenido dentro de la imagen */}
-            <Text style={styles.textoSale}>For Sale</Text>
-            <View style={styles.contenedorInfor}>
-              <View>
-                <Text style={styles.textoInfo}>Bill House</Text>
-
-              </View>
-
-              <View>
-                <Text style={styles.textoInfo}>$2.500.00</Text>
-                <View style={styles.contenedorReview}>
-                  
-                  <Text style={styles.textoInfo}>4.2 Reviews</Text>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.contenedorImage}>
-          <ImageBackground source={require('../assets/image4.jpg')}
-           style={styles.estiloImagenes} 
-           imageStyle={{borderRadius:20}}> 
-           {/* contenido dentro de la imagen */}
-           <Text style={styles.textoSale}>For Sale</Text>
-
-           <View style={styles.contenedorInfor}>
-              <View>
-                <Text style={styles.textoInfo}>Clint Villa</Text>
-
-              </View>
-
-              <View>
-                <Text style={styles.textoInfo}>$5.500.00</Text>
-                <View style={styles.contenedorReview}>
-                  
-                  <Text style={styles.textoInfo}>4.0 Reviews</Text>
-                </View>
-              </View>
-            </View>
-          </ImageBackground>
-        </TouchableOpacity>
       </ScrollView>
 
     </SafeAreaView>
@@ -157,7 +149,7 @@ const styles = StyleSheet.create({
   },
   textoSale:{
     color:'white',
-    backgroundColor:'#00CCFF',
+    backgroundColor:'#58A9FF',
     height:30,
     width:70,
     borderRadius:20,
