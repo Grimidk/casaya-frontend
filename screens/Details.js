@@ -1,16 +1,22 @@
 import React, {Component} from 'react'
-import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,ScrollView} from 'react-native'
+import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,ScrollView, TouchableOpacity, Linking} from 'react-native'
 import {Icon} from '@rneui/themed';
 
 
 export default function Details({route}){
     const{property}=route.params; //Se obtiene la propiedad seleccionada
+
+    const openWhatsApp = () => {
+      const phoneNumber = property.number;
+      const url = 'https://wa.me/'+phoneNumber;
+      Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
+  };
     
     return (
       <SafeAreaView style= {{flex:1, backgroundColor: 'white'}}>
         <StatusBar translucent backgroundColor = "rgba(0,0,0,0)"/>
         <View style={{height:400}}>
-          <ImageBackground source={require('../assets/image4.jpg')} resizeMode='cover' style={{height:400}}></ImageBackground>
+          <ImageBackground source={property.image2} resizeMode='cover' style={{height:400}}></ImageBackground>
         </View>
         <ScrollView> 
           {/*Seccion de titulo*/}
@@ -56,7 +62,7 @@ export default function Details({route}){
 
         {/*Seccion descripcion */}
         <View style={{marginTop:40, marginBottom: 40, paddingHorizontal:20}}>
-          <Text style={styles.description}> Descripcion</Text>
+          <Text style={styles.description}>Reseña </Text>
           <Text style={styles.textDescription}>{property.description}</Text>
         </View>
 
@@ -81,6 +87,14 @@ export default function Details({route}){
             <Icon name='minus' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
             <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>AC</Text>
           </View>
+        </View>
+
+        {/* Sección de contacto por WhatsApp */}
+        <View style={{ alignItems: 'center', marginVertical: 20 }}>
+          <TouchableOpacity style={styles.whatsappButton} onPress={openWhatsApp}>
+            <Icon name='whatsapp' type='font-awesome' size={20} color='white' />
+            <Text style={{ color: 'white', marginLeft: 10 }}>Contactar por WhatsApp</Text>
+          </TouchableOpacity>
         </View>
 
         </ScrollView>
@@ -139,5 +153,13 @@ const styles = StyleSheet.create({
     width:70,
     height: 60,
     borderRadius:12
+  },
+  whatsappButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#25D366',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20
   }
 })
