@@ -20,27 +20,48 @@ export default function Home(props)   {
     {
       id: 1,
       image: require('../assets/image1.jpg'),
+      image2: require('../assets/image4.jpg'),
       title: 'Casa en la playa',
       price: '$500,000',
       reviews: '4.8',
-      status: 'For Sale',
+      status: ' Venta',
+      description: 'Casa lujosa en la playa con vista al mar.',
+      location: 'Margarita, Pampatar',
+      bathrooms:'2',
+      rooms: '2',
+      parking:'1',
+      number:'+584241818540'
        
     },
     {
       id: 2,
       image: require('../assets/image2.jpg'),
-      title: 'Apartamento en la ciudad',
-      price: '$300,000',
+      image2: require('../assets/image5.jpeg'),
+      title: 'Casa en la ciudad',
+      price: '$150,000',
       reviews: '4.5',
-      status: 'For Rent',
+      status: 'Remate',
+      description: 'Casa moderna alejada del centro de la ciudad.',
+      location: 'Caracas, La Miranda',
+      bathrooms:'2',
+      rooms: '3',
+      parking:'2',
+      number:'+584241818540'
     },
     {
       id: 3,
       image: require('../assets/image3.jpg'),
+      image2: require('../assets/image6.jpg'),
       title: 'Chalet en las montañas',
       price: '$700,000',
       reviews: '4.9',
-      status: 'For Sale',
+      status: ' Venta',
+      description: 'Chalet acogedor en las montañas con vistas impresionantes.',
+      location: 'Caracas, La Lagunita',
+      bathrooms:'3',
+      rooms: '4',
+      parking:'2',
+      number:'+584241818540'
     },
   ];
   return (
@@ -65,7 +86,7 @@ export default function Home(props)   {
         <TextInput placeholder="Espacio de búsqueda" />
       </View>
 
-      <Text style={styles.result}>50 Resultados Encontrados</Text>
+      <Text style={styles.result}> {properties.length} Resultados Encontrados</Text>
       {/* la lista de las imagenes */}
       <ScrollView>
       
@@ -77,8 +98,9 @@ export default function Home(props)   {
             title={property.title}
             price={property.price}
             reviews={property.reviews}
-            status={property.status}
-            onPress={()=>props.navigation.navigate('Detail')}
+            status={property.status} 
+            onPress={() => {navigation.navigate('Details', { property });
+              }}
           />
         ))}
       </View>
