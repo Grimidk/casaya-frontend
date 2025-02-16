@@ -3,7 +3,7 @@ import { TouchableOpacity, ImageBackground, Text, View, StyleSheet } from 'react
 
 const PropertyCard = (props) => {
   // Extraer los datos de las props
-  const { image, title, price, reviews, status,description,location,bathrooms,rooms,parking, onPress } = props;
+  const { image, image2,title, price, reviews, status,description,location,bathrooms,rooms,parking, onPress } = props;
 
   return (
     <TouchableOpacity style={styles.contenedorImage} onPress={onPress}>

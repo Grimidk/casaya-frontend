@@ -13,7 +13,7 @@ function MyStack() {
   return (
     <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name="Home" component={Home} />    
-      <Stack.Screen name="Detail" component={Details} />
+      <Stack.Screen name="Details" component={Details} />
     </Stack.Navigator>
   );
 }
