@@ -14,7 +14,7 @@ import {
 import PropertyCard from '../components/PropertyCard'
 
 
-export default function Home()   {
+export default function Home({navigation})   {
 
   const properties = [
     {
@@ -75,7 +75,7 @@ export default function Home()   {
 
       <View style={styles.inputContainer}>
         
-        <TextInput placeholder="espacio de búsqueda" />
+        <TextInput placeholder=" Espacio de búsqueda" />
       </View>
 
       <Text style={styles.result}>50 Resultados Encontrados</Text>
@@ -91,12 +91,8 @@ export default function Home()   {
             price={property.price}
             reviews={property.reviews}
             status={property.status} 
-            description={property.description}
-            location={property.location}
-            bathrooms={property.bathrooms}
-            rooms={property.rooms}
-            parking={property.parking}
-            onPress={()=>props.navigation.navigate('Detail')}
+            onPress={() => {navigation.navigate('Details', { property });
+              }}
           />
         ))}
       </View>
