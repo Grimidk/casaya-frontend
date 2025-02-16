@@ -14,7 +14,7 @@ import {
 import PropertyCard from '../components/PropertyCard'
 
 
-export default function Home({navigation})   {
+export default function Home()   {
 
   const properties = [
     {
@@ -96,7 +96,7 @@ export default function Home({navigation})   {
             bathrooms={property.bathrooms}
             rooms={property.rooms}
             parking={property.parking}
-            onPress={() => navigation.navigate('Details', { property })}
+            onPress={()=>props.navigation.navigate('Detail')}
           />
         ))}
       </View>
