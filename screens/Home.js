@@ -14,7 +14,7 @@ import {
 import PropertyCard from '../components/PropertyCard'
 
 
-export default function Home(props)   {
+export default function Home({navigation})   {
 
   const properties = [
     {
@@ -24,6 +24,11 @@ export default function Home(props)   {
       price: '$500,000',
       reviews: '4.8',
       status: 'For Sale',
+      description: 'Casa lujosa en la playa con vista al mar.',
+      location: 'Playa',
+      bathrooms:'2',
+      rooms: '2',
+      parking:'1'
        
     },
     {
@@ -33,6 +38,11 @@ export default function Home(props)   {
       price: '$300,000',
       reviews: '4.5',
       status: 'For Rent',
+      description: 'Apartamento moderno en el corazón de la ciudad.',
+      location: 'Ciudad',
+      bathrooms:'2',
+      rooms: '3',
+      parking:'1'
     },
     {
       id: 3,
@@ -41,6 +51,11 @@ export default function Home(props)   {
       price: '$700,000',
       reviews: '4.9',
       status: 'For Sale',
+      description: 'Chalet acogedor en las montañas con vistas impresionantes.',
+      location: 'Montañas',
+      bathrooms:'3',
+      rooms: '4',
+      parking:'2'
     },
   ];
   return (
@@ -75,8 +90,13 @@ export default function Home(props)   {
             title={property.title}
             price={property.price}
             reviews={property.reviews}
-            status={property.status}
-            onPress={()=>props.navigation.navigate('Detail')}
+            status={property.status} 
+            description={property.description}
+            location={property.location}
+            bathrooms={property.bathrooms}
+            rooms={property.rooms}
+            parking={property.parking}
+            onPress={() => navigation.navigate('Details', { property })}
           />
         ))}
       </View>
@@ -129,7 +149,7 @@ const styles = StyleSheet.create({
   },
   textoSale:{
     color:'white',
-    backgroundColor:'#00CCFF',
+    backgroundColor:'#58A9FF',
     height:30,
     width:70,
     borderRadius:20,

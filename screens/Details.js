@@ -1,24 +1,22 @@
 import React, {Component} from 'react'
 import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,ScrollView} from 'react-native'
 import {Icon} from '@rneui/themed';
-import { color } from '@rneui/base';
 
-export default function Details(){
-  
+
+export default function Details({route}){
+    const{property}=route.params; //Se obtiene la propiedad seleccionada
+    
     return (
       <SafeAreaView style= {{flex:1, backgroundColor: 'white'}}>
         <StatusBar translucent backgroundColor = "rgba(0,0,0,0)"/>
         <View style={{height:400}}>
-          <ImageBackground source={require('../assets/image4.jpg')} resizeMode='cover' style={{height:400}}>
-
-          </ImageBackground>
-
+          <ImageBackground source={require('../assets/image4.jpg')} resizeMode='cover' style={{height:400}}></ImageBackground>
         </View>
         <ScrollView> 
           {/*Seccion de titulo*/}
           <View style={styles.containerTitle}>
-            <Text style={styles.textTitle}>Day House</Text>
-            <Text style={styles.textTitle}>$3.500.000</Text>
+            <Text style={styles.textTitle}>{property.title}</Text>
+            <Text style={styles.textTitle}>{property.price}</Text>
           </View>
         
         
@@ -28,12 +26,12 @@ export default function Details(){
         <View style={styles.containerSubtitle}>
           <View style={styles.location}>
             <Icon name='bookmark-outline' type='ionicon' size={20} color={'gray'}/>
-            <Text style={{color:'slategray',fontSize:15}}>Caracas</Text>
+            <Text style={{color:'slategray',fontSize:15}}>{property.location}</Text>
           </View> 
           
           <View style={styles.location}>
-            <Icon name='star' type='font-awesome' size={20} color={'orange'}/>
-            <Text style={{color:'slategray',fontSize:15}}>4.5 Reviews</Text>
+            <Icon name='star' type='font-awesome' size={20} color="#A95534"/>
+            <Text style={{color:'slategray',fontSize:15}}>{property.reviews} Reviews</Text>
           </View> 
         </View>
 
@@ -41,17 +39,17 @@ export default function Details(){
         <View style={styles.contenedorIcons}>
           <View>
             <Icon name='bed' type='font-awesome' size={20} color={'gray'}/>
-            <Text style={{color:'slategray', fontSize:15}}> 4 Habitaciones </Text>
+            <Text style={{color:'slategray', fontSize:15}}> {property.rooms} </Text>
           </View>
 
           <View>
             <Icon name='bath' type='font-awesome' size={20} color={'gray'}/>
-            <Text style= {{color:'slategray', fontSize:15}}> 3 Baños </Text>
+            <Text style= {{color:'slategray', fontSize:15}}>{property.bathrooms} </Text>
           </View>
 
           <View>
             <Icon name='car' type='font-awesome' size={20} color={'gray'}/>
-            <Text style ={{color:'slategray', fontSize:15}}> 2 Puestos </Text>
+            <Text style ={{color:'slategray', fontSize:15}}> {property.parking} </Text>
           </View>
 
         </View>
@@ -59,7 +57,7 @@ export default function Details(){
         {/*Seccion descripcion */}
         <View style={{marginTop:40, marginBottom: 40, paddingHorizontal:20}}>
           <Text style={styles.description}> Descripcion</Text>
-          <Text style={styles.textDescription}>Lujoso casa totalmente amoblada con acabados de alta calidad . Ubicado en urbanizacion cerrada con vigilancia</Text>
+          <Text style={styles.textDescription}>{property.description}</Text>
         </View>
 
         {/* Seccion facilidades */}
