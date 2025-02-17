@@ -81,7 +81,7 @@ export default function Home({navigation})   {
 
       <View style={styles.inputContainer}>
         
-        <TextInput placeholder="        Espacio de búsqueda" />
+        <TextInput placeholder="        Filtrar por condición" />
       </View>
 
       <Text style={styles.result}> {properties.length} Resultados Encontrados</Text>
