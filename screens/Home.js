@@ -12,9 +12,9 @@ import {
   ImageBackground,
 } from "react-native";
 import PropertyCard from '../components/PropertyCard'
-import { Ionicons, Feather } from "@expo/vector-icons";
 
-export default function Home(props)   {
+
+export default function Home({navigation})   {
 
   const properties = [
     {
@@ -66,8 +66,6 @@ export default function Home(props)   {
   ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      
-      
       <StatusBar
         translucent={false}
         backgroundColor={"#fff"}
@@ -83,7 +81,7 @@ export default function Home(props)   {
 
       <View style={styles.inputContainer}>
         
-        <TextInput placeholder="Espacio de búsqueda" />
+        <TextInput placeholder="        Espacio de búsqueda" />
       </View>
 
       <Text style={styles.result}> {properties.length} Resultados Encontrados</Text>
@@ -153,7 +151,7 @@ const styles = StyleSheet.create({
   },
   textoSale:{
     color:'white',
-    backgroundColor:'A95534',
+    backgroundColor:'#58A9FF',
     height:30,
     width:70,
     borderRadius:20,
@@ -178,7 +176,5 @@ const styles = StyleSheet.create({
   },
   contenedorReview:{
     flexDirection:'row',
-  },
-  
-
+  }
 })
