@@ -16,6 +16,7 @@ import PropertyCard from '../components/PropertyCard'
 
 export default function Home(props)   {
 
+
   const properties = [
     {
       id: 1,
@@ -52,10 +53,12 @@ export default function Home(props)   {
       />
       <View style={styles.header}>
         <Text style={styles.textoProfile}>Buscar Propiedad</Text>
-        <Image
-          source={require("../assets/profile1.jpg")}
-          style={styles.profileImage}
-        />
+        <TouchableOpacity onPress={() => props.navigation.navigate("userProfile")}>
+          <Image
+            source={require("../assets/profile1.jpg")}
+            style={styles.profileImage}
+          />
+         </TouchableOpacity>
       </View>
 
       <View style={styles.inputContainer}>

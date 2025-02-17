@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './screens/Home';
 import Details from './screens/Details';
+import userProfile from './screens/userProfile';
 
 export default function App() {
 
@@ -14,6 +15,7 @@ function MyStack() {
     <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name="Home" component={Home} />    
       <Stack.Screen name="Detail" component={Details} />
+      <Stack.Screen name="userProfile" component={userProfile} />
     </Stack.Navigator>
   );
 }
