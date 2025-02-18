@@ -1,24 +1,28 @@
 import React, {Component} from 'react'
-import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,ScrollView} from 'react-native'
+import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,ScrollView, TouchableOpacity, Linking} from 'react-native'
 import {Icon} from '@rneui/themed';
-import { color } from '@rneui/base';
 
-export default function Details(){
-  
+
+export default function Details({route}){
+    const{property}=route.params; //Se obtiene la propiedad seleccionada
+
+    const openWhatsApp = () => {
+      const phoneNumber = property.number;
+      const url = 'https://wa.me/'+phoneNumber;
+      Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
+  };
+    
     return (
       <SafeAreaView style= {{flex:1, backgroundColor: 'white'}}>
         <StatusBar translucent backgroundColor = "rgba(0,0,0,0)"/>
         <View style={{height:400}}>
-          <ImageBackground source={require('../assets/image4.jpg')} resizeMode='cover' style={{height:400}}>
-
-          </ImageBackground>
-
+          <ImageBackground source={property.image2} resizeMode='cover' style={{height:400}}></ImageBackground>
         </View>
         <ScrollView> 
           {/*Seccion de titulo*/}
           <View style={styles.containerTitle}>
-            <Text style={styles.textTitle}>Day House</Text>
-            <Text style={styles.textTitle}>$3.500.000</Text>
+            <Text style={styles.textTitle}>{property.title}</Text>
+            <Text style={styles.textTitle}>{property.price}</Text>
           </View>
         
         
@@ -28,12 +32,12 @@ export default function Details(){
         <View style={styles.containerSubtitle}>
           <View style={styles.location}>
             <Icon name='bookmark-outline' type='ionicon' size={20} color={'gray'}/>
-            <Text style={{color:'slategray',fontSize:15}}>Caracas</Text>
+            <Text style={{color:'slategray',fontSize:15}}>{property.location}</Text>
           </View> 
           
           <View style={styles.location}>
-            <Icon name='star' type='font-awesome' size={20} color={'orange'}/>
-            <Text style={{color:'slategray',fontSize:15}}>4.5 Reviews</Text>
+            <Icon name='star' type='font-awesome' size={20} color="#A95534"/>
+            <Text style={{color:'slategray',fontSize:15}}>{property.reviews} Reviews</Text>
           </View> 
         </View>
 
@@ -41,25 +45,25 @@ export default function Details(){
         <View style={styles.contenedorIcons}>
           <View>
             <Icon name='bed' type='font-awesome' size={20} color={'gray'}/>
-            <Text style={{color:'slategray', fontSize:15}}> 4 Habitaciones </Text>
+            <Text style={{color:'slategray', fontSize:15}}> {property.rooms} </Text>
           </View>
 
           <View>
             <Icon name='bath' type='font-awesome' size={20} color={'gray'}/>
-            <Text style= {{color:'slategray', fontSize:15}}> 3 Baños </Text>
+            <Text style= {{color:'slategray', fontSize:15}}>{property.bathrooms} </Text>
           </View>
 
           <View>
             <Icon name='car' type='font-awesome' size={20} color={'gray'}/>
-            <Text style ={{color:'slategray', fontSize:15}}> 2 Puestos </Text>
+            <Text style ={{color:'slategray', fontSize:15}}> {property.parking} </Text>
           </View>
 
         </View>
 
         {/*Seccion descripcion */}
         <View style={{marginTop:40, marginBottom: 40, paddingHorizontal:20}}>
-          <Text style={styles.description}> Descripcion</Text>
-          <Text style={styles.textDescription}>Lujoso casa totalmente amoblada con acabados de alta calidad . Ubicado en urbanizacion cerrada con vigilancia</Text>
+          <Text style={styles.description}>Reseña </Text>
+          <Text style={styles.textDescription}>{property.description}</Text>
         </View>
 
         {/* Seccion facilidades */}
@@ -83,6 +87,14 @@ export default function Details(){
             <Icon name='minus' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
             <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>AC</Text>
           </View>
+        </View>
+
+        {/* Sección de contacto por WhatsApp */}
+        <View style={{ alignItems: 'center', marginVertical: 20 }}>
+          <TouchableOpacity style={styles.whatsappButton} onPress={openWhatsApp}>
+            <Icon name='whatsapp' type='font-awesome' size={20} color='white' />
+            <Text style={{ color: 'white', marginLeft: 10 }}>Contactar por WhatsApp</Text>
+          </TouchableOpacity>
         </View>
 
         </ScrollView>
@@ -141,5 +153,13 @@ const styles = StyleSheet.create({
     width:70,
     height: 60,
     borderRadius:12
+  },
+  whatsappButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#25D366',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20
   }
 })
