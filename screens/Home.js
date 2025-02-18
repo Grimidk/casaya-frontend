@@ -64,6 +64,111 @@ export default function Home({navigation})   {
       parking:'2',
       number:'+584241818540'
     },
+    { 
+      id: 4,
+    image: require('../assets/casa1.jpg'),
+    image2: require('../assets/interior1.jpeg'),
+    title: 'Casa en las montañas',
+    price: '$200,000',
+    reviews: '4.0',
+    status: ' Remate',
+    description: 'Casa remodelada en las montañas con vistas impresionantes.',
+    location: 'Oripoto',
+    bathrooms:'4',
+    rooms: '4',
+    parking:'3',
+    number:'+584241818540'
+  },
+  {
+  id: 5,
+  image: require('../assets/casa2.jpg'),
+  image2: require('../assets/interior2.jpeg'),
+  title: 'Casa Moderna',
+  price: '$600,000',
+  reviews: '4.7',
+  status: ' Venta',
+  description: 'Casa acogedora remodelada en conjunto residencial con vistas impresionantes.',
+  location: 'Valencia',
+  bathrooms:'3',
+  rooms: '4',
+  parking:'2',
+  number:'+584241818540'
+  },
+  {
+  id:6,
+  image: require('../assets/casa3.jpg'),
+  image2: require('../assets/interior3.jpeg'),
+  title: 'Casa con Piscina',
+  price: '$1,000,000',
+  reviews: '4.8',
+  status: ' Venta',
+  description: 'Casa remodelada con piscina al lado del puerto con puestos de lancha',
+  location: 'Anzoategui, Lecheria',
+  bathrooms:'5',
+  rooms: '5',
+  parking:'2',
+  number:'+584241818540'
+},
+{
+  id: 7,
+  image: require('../assets/casa4.jpg'),
+  image2: require('../assets/interior4.jpg'),
+  title: 'Casa en la ciudad',
+  price: '$150,000',
+  reviews: '4.0',
+  status: ' Remate',
+  description: 'Casa en la ciudad con seguridad privada con grandes jardines',
+  location: 'Maracaibo',
+  bathrooms:'3',
+  rooms: '4',
+  parking:'1',
+  number:'+584241818540'
+ },
+ {
+  id: 8,
+  image: require('../assets/casa5.jpg'),
+  image2: require('../assets/interior5.jpeg'),
+  title: 'Casa en la ciudad',
+  price: '$180,000',
+  reviews: '3.5',
+  status: ' Venta',
+  description: 'Casa en la ciudad con seguridad privada con grandes jardines',
+  location: 'La Trinidad, Caracas',
+  bathrooms:'5',
+  rooms: '6',
+  parking:'3',
+  number:'+584241818540'
+},
+{
+  id: 9,
+  image: require('../assets/casa6.jpg'),
+  image2: require('../assets/interior6.jpeg'),
+  title: 'Casa en la ciudad',
+  price: '$160,000',
+  reviews: '3.9',
+  status: ' Remate',
+  description: 'Casa en la ciudad con ambiente silencioso y reservado',
+  location: 'Maracay',
+  bathrooms:'3',
+  rooms: '4',
+  parking:'2',
+  number:'+584241818540'
+},
+{
+  id: 10,
+  image: require('../assets/casa7.jpg'),
+  image2: require('../assets/interior7.jpeg'),
+  title: 'Mansión',
+  price: '$2,000,000',
+  reviews: '5.0',
+  status: ' Venta',
+  description: 'Mansión de lujo con seguridad privada y grandes jardines, incluye jacuzzi y tiene amplias habitaciones',
+  location: 'La Lagunita, Caracas',
+  bathrooms:'5',
+  rooms: '6',
+  parking:'4',
+  number:'+584241818540'
+}
   ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -74,7 +179,7 @@ export default function Home({navigation})   {
       />
       <View style={styles.header}>
         <Text style={styles.textoProfile}>Buscar Propiedad</Text>
-        <TouchableOpacity onPress={() => props.navigation.navigate("userProfile")}>
+        <TouchableOpacity onPress={() => navigation.navigate('userProfile')}>
           <Image
             source={require("../assets/profile1.jpg")}
             style={styles.profileImage}
@@ -105,7 +210,7 @@ export default function Home({navigation})   {
           />
         ))}
       </View>
-
+        
       </ScrollView>
 
     </SafeAreaView>
