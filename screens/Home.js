@@ -246,15 +246,22 @@ const styles = StyleSheet.create({
     fontSize:22,
     fontWeight:'bold'
   },
-  inputContainer: {
-    width: '100%',
+ inputContainer: {
+    width: '90%',
     backgroundColor: 'white',
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom:30,
-    borderBottomWidth:0.5,
-    borderBottomColor:'slategray'
+    marginBottom: 30,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'slategray',
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
+    alignSelf: 'center',
   },
   result:{
     fontSize:18,
