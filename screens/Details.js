@@ -5,7 +5,6 @@ import {Icon} from '@rneui/themed';
 
 export default function Details({route}){
     const{property}=route.params; //Se obtiene la propiedad seleccionada
-
     const openWhatsApp = () => {
       const phoneNumber = property.number;
       const url = 'https://wa.me/'+phoneNumber;
