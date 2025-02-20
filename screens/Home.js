@@ -210,7 +210,7 @@ export default function Home({navigation}) {
   reviews: '3.9',
   status: ' Remate',
   description: 'Casa en la ciudad con ambiente silencioso y reservado',
-  location: 'Maracay',
+  locatiton: 'Maracay',
   bathrooms:'3',
   rooms: '4',
   parking:'2',
