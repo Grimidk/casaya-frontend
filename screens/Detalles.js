@@ -3,15 +3,14 @@ import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,Sc
 import {Icon} from '@rneui/themed';
 
 
-export default function Details({route}){
+export default function Detalles({route}){
     const{property}=route.params; //Se obtiene la propiedad seleccionada
-
     const openWhatsApp = () => {
       const phoneNumber = property.number;
       const url = 'https://wa.me/'+phoneNumber;
       Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
-    
+  
     return (
       <SafeAreaView style= {{flex:1, backgroundColor: 'white'}}>
         <StatusBar translucent backgroundColor = "rgba(0,0,0,0)"/>
