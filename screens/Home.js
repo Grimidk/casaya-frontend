@@ -192,10 +192,14 @@ export default function Home({navigation}) {
       />
       <View style={styles.header}>
         <Text style={styles.textoProfile}>Buscar Propiedad</Text>
-        <Image
-          source={require("../assets/profile1.jpg")}
-          style={styles.profileImage}
-        />
+        <TouchableOpacity onPress={() => {navigation.navigate('userProfile');
+              }}>
+          <Image
+            source={require("../assets/profile1.jpg")}
+            style={styles.profileImage}
+          />
+         </TouchableOpacity>
+        
       </View>
 
       <View style={styles.inputContainer}>
