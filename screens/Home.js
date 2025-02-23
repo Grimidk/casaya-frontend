@@ -12,7 +12,7 @@ import {
   ImageBackground,
 } from "react-native";
 import PropertyCard from '../components/PropertyCard';
-import { PropertyService } from '../services/property.service';
+
 
 const properties = [
   {
@@ -29,6 +29,39 @@ const properties = [
     rooms: '2',
     parking:'1',
     number:'+584241818540'
+  },
+  {
+    id: 2,
+    image: require('../assets/image2.jpg'),
+    image2: require('../assets/image5.jpeg'),
+    title: 'Casa en la ciudad',
+    price: '$150,000',
+    reviews: '4.5',
+    status: 'Remate',
+    description: 'Casa moderna alejada del centro de la ciudad.',
+    location: 'Caracas, La Miranda',
+    bathrooms:'2',
+    rooms: '3',
+    parking:'2',
+    number:'+584241818540'
+  },
+  {
+    id: 3,
+    image: require('../assets/image3.jpg'),
+    image2: require('../assets/image6.jpg'),
+    title: 'Chalet en las montañas',
+    price: '$700,000',
+    reviews: '4.9',
+    status: ' Venta',
+    description: 'Chalet acogedor en las montañas con vistas impresionantes.',
+    location: 'Caracas, La Lagunita',
+    bathrooms:'3',
+    rooms: '4',
+    parking:'2',
+    number:'+584241818540'
+  },
+  {
+    id: 4,
   },
   {
     id: 2,
@@ -89,8 +122,112 @@ const properties = [
     rooms: '4',
     parking:'2',
     number:'+584241818540'
+    id: 5,
+    image: require('../assets/casa2.jpg'),
+    image2: require('../assets/interior2.jpeg'),
+    title: 'Casa Moderna',
+    price: '$600,000',
+    reviews: '4.7',
+    status: ' Venta',
+    description: 'Casa acogedora remodelada en conjunto residencial con vistas impresionantes.',
+    location: 'Valencia',
+    bathrooms:'3',
+    rooms: '4',
+    parking:'2',
+    number:'+584241818540'
   },
   {
+    id: 6,
+    image: require('../assets/casa3.jpg'),
+    image2: require('../assets/interior3.jpeg'),
+    title: 'Casa con Piscina',
+    price: '$1,000,000',
+    reviews: '4.8',
+    status: ' Venta',
+    description: 'Casa remodelada con piscina al lado del puerto con puestos de lancha',
+    location: 'Anzoategui, Lecheria',
+    bathrooms:'5',
+    rooms: '5',
+    parking:'2',
+    number:'+584241818540'
+  },
+  {
+    id: 7,
+    image: require('../assets/casa4.jpg'),
+    image2: require('../assets/interior4.jpg'),
+    title: 'Casa en la ciudad',
+    price: '$150,000',
+    reviews: '4.0',
+    status: ' Remate',
+    description: 'Casa en la ciudad con seguridad privada con grandes jardines',
+    location: 'Maracaibo',
+    bathrooms:'3',
+    rooms: '4',
+    parking:'1',
+    number:'+584241818540'
+  },
+  {
+    id: 8,
+    image: require('../assets/casa5.jpg'),
+    image2: require('../assets/interior5.jpeg'),
+    title: 'Casa en la ciudad',
+    price: '$180,000',
+    reviews: '3.5',
+    status: ' Venta',
+    description: 'Casa en la ciudad con seguridad privada con grandes jardines',
+    location: 'La Trinidad, Caracas',
+    bathrooms:'5',
+    rooms: '6',
+    parking:'3',
+    number:'+584241818540'
+  },
+  {
+    id: 9,
+    image: require('../assets/casa6.jpg'),
+    image2: require('../assets/interior6.jpeg'),
+    title: 'Casa en la ciudad',
+    price: '$160,000',
+    reviews: '3.9',
+    status: ' Remate',
+    description: 'Casa en la ciudad con ambiente silencioso y reservado',
+    location: 'Maracay',
+    bathrooms:'3',
+    rooms: '4',
+    parking:'2',
+    number:'+584241818540'
+  },
+  {
+    id: 10,
+    image: require('../assets/casa7.jpg'),
+    image2: require('../assets/interior7.jpeg'),
+    title: 'Mansión',
+    price: '$2,000,000',
+    reviews: '5.0',
+    status: ' Venta',
+    description: 'Mansión de lujo con seguridad privada y grandes jardines, incluye jacuzzi y tiene amplias habitaciones',
+    location: 'La Lagunita, Caracas',
+    bathrooms:'5',
+    rooms: '6',
+    parking:'4',
+    number:'+584241818540'
+  }
+];
+
+export default function Home({navigation}) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredProperties, setFilteredProperties] = useState(properties);
+
+  const searchProperty = (query) => {
+    setSearchQuery(query);
+    if (query) {
+      const filtered = properties.filter(property => 
+        property.location.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredProperties(filtered);
+    } else {
+      setFilteredProperties(properties);
+    }
+  };
     id: 6,
     image: require('../assets/casa3.jpg'),
     image2: require('../assets/interior3.jpeg'),
@@ -222,7 +359,7 @@ export default function Home({navigation}) {
               price={property.price}
               reviews={property.reviews}
               status={property.status} 
-              onPress={() => {navigation.navigate('Details', { property });
+              onPress={() => {navigation.navigate('Detalles', { property });
               }}
             />
           ))}
@@ -253,7 +390,7 @@ const styles = StyleSheet.create({
  inputContainer: {
     width: '90%',
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 1,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 30,
