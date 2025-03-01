@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList } from 'react-native';
 
-
 const properties = [
    require('../assets/casa1.jpg'),
    require('../assets/casa2.jpg'),
@@ -16,7 +15,6 @@ const properties = [
 ];
 
 const userProfile = () => {
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar backgroundColor="#A95534" />

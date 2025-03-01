@@ -12,14 +12,9 @@ import welcome from './screens/welcome';
 import splashScreen from './screens/splashScreen';
 import Favorites from './screens/Favorites';
 import Upload from './screens/Upload';
-import LoginScreen from './screens/LoginScreen';
-import { UserContext, UserProvider } from './context/UserContext';
-import { View } from 'react-native';
-import RegisterScreen from './screens/RegisterScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
 
 function HomeStack() {
   return (
@@ -27,12 +22,10 @@ function HomeStack() {
       screenOptions={{
         headerShown: true, // Cambiado a true para mostrar el header
         headerRight: () => (
-          
-            <Image
-              source={require('./assets/logo.png')}
-              style={{ width: 40, height: 40, marginRight: 10 }}
-            />
-          
+          <Image
+            source={require('./assets/logo.png')} 
+            style={{ width: 40, height: 40, marginRight: 10 }}
+          />
         ),
         headerStyle:{
           backgroundColor:'#A95534'
@@ -42,8 +35,6 @@ function HomeStack() {
     >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Detalles" component={Detalles} />
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
     </Stack.Navigator>
   );
 }
@@ -79,17 +70,13 @@ function MyTabs() {
 
 export default function App() {
   return (
-    <UserProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="splashScreen" component={splashScreen} />
-          <Stack.Screen name="welcome" component={welcome} /> 
-          <Stack.Screen name="MyTabs" component={MyTabs} />
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </UserProvider>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="splashScreen" component={splashScreen} />
+        <Stack.Screen name="welcome" component={welcome} /> 
+        <Stack.Screen name="MyTabs" component={MyTabs} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
