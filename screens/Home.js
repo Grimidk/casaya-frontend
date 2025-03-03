@@ -97,7 +97,7 @@ export default function Home({navigation})   {
             price={property.price}
             reviews={property.reviews}
             status={property.status} 
-            onPress={() => {navigation.navigate('Details', { property });
+            onPress={() => {navigation.navigate('Detalles', { property });
               }}
           />
         ))}

@@ -13,24 +13,26 @@ import {
 } from 'react-native';
 import { UserContext } from '../context/UserContext';
 
+
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useContext(UserContext);
 
-  const handleLogin = () => {
-    if (!username || !password) {
+  const handleLogin = async () => {
+    if (!email || !password) {
       Alert.alert('Error', 'Por favor, completa todos los campos.');
       return;
     }
 
-    const isLoggedIn = login(username, password);
+    const isLoggedIn = await login(email, password); // Llamar a la función de login
     if (isLoggedIn) {
-      navigation.navigate('MyTabs');
+      navigation.navigate('MyTabs'); // Redirigir al usuario a la pantalla principal
     } else {
-      Alert.alert('Error', 'Usuario o contraseña incorrectos');
+      Alert.alert('Error', 'Correo o contraseña incorrectos');
     }
   };
+  
 
   return (
     <KeyboardAvoidingView
@@ -43,9 +45,9 @@ const LoginScreen = ({ navigation }) => {
 
         <TextInput
           style={styles.input}
-          placeholder="Nombre de usuario"
-          value={username}
-          onChangeText={setUsername}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
           autoCapitalize="none"
         />
 

@@ -11,6 +11,7 @@ import {
   Alert,
   Image
 } from 'react-native';
+import axios from 'axios';
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -20,25 +21,38 @@ const RegisterScreen = ({ navigation }) => {
   const [userType, setUserType] = useState(''); // Campo de texto para el tipo de usuario
   const [password, setPassword] = useState(''); // Campo para la contraseña
 
-  const handleRegister = () => {
-    if (!name || !email || !phone || !gender || !userType || !password) {
+  const handleRegister = async  () => {
+    if (!name || !email || !phone || !gender || !password) {
       Alert.alert('Error', 'Por favor, completa todos los campos.');
       return;
     }
 
-    // Aquí puedes agregar la lógica para registrar al usuario
     const userData = {
       name,
       email,
       phone,
       gender,
-      userType,
       password,
     };
 
-    console.log('Datos del usuario:', userData);
-    Alert.alert('Éxito', 'Registro exitoso');
-    navigation.navigate('LoginScreen'); // Redirigir al usuario a la pantalla de inicio de sesión
+    try {
+      // Hacer una petición POST al backend para registrar al usuario
+      const response = await axios.post(
+        'https://casaya-back-backup-production.up.railway.app/users', // URL del endpoint de registro
+        userData, // Datos del usuario
+      );
+
+      // Si la respuesta es exitosa (código 201 o 200)
+      if (response.status === 201 || response.status === 200) {
+        Alert.alert('Éxito', 'Registro exitoso');
+        navigation.navigate('LoginScreen'); // Redirigir al usuario a la pantalla de inicio de sesión
+      } else {
+        Alert.alert('Error', 'No se pudo completar el registro');
+      }
+    } catch (error) {
+      console.error('Error al registrar el usuario:', error.response?.data || error.message);
+      Alert.alert('Error', 'No se pudo completar el registro. Inténtalo de nuevo más tarde.');
+    }
   };
 
   return (
@@ -86,12 +100,12 @@ const RegisterScreen = ({ navigation }) => {
         />
 
         {/* Input para el tipo de usuario */}
-        <TextInput
+        {/* <TextInput
           style={styles.input}
           placeholder="Tipo de usuario (Inquilino o Propietario)"
           value={userType}
           onChangeText={setUserType}
-        />
+        /> */}
 
         {/* Input para la contraseña */}
         <TextInput
