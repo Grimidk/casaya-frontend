@@ -13,8 +13,8 @@
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.1",
-    "@rneui/base": "github:react-native-elements/react-native-elements#base",
-    "@rneui/themed": "github:react-native-elements/react-native-elements#themed",
+    "@rneui/base": "https://github.com/react-native-elements/react-native-elements#base",
+    "@rneui/themed": "https://github.com/react-native-elements/react-native-elements#themed",
     "expo": "~52.0.33",
     "expo-modules-core": "~2.2.2",
     "expo-status-bar": "~2.0.1",
@@ -24,7 +24,7 @@
     "react-native-gesture-handler": "^2.23.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
-    "react-native-web": "~0.19.13"
+    "react-native-web": "^0.18.10"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

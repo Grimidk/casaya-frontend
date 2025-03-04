@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
       },
       textoSale:{
         color:'white',
-        backgroundColor:'#804000',
+        backgroundColor:'#A95534',
         height:30,
         width:70,
         borderRadius:20,

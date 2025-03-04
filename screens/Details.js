@@ -1,15 +1,22 @@
 import React, {Component} from 'react'
 import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,ScrollView, TouchableOpacity, Linking} from 'react-native'
 import {Icon} from '@rneui/themed';
+import { useNavigation } from '@react-navigation/native';
 
 
-export default function Details({route}){
+export default function Details({route, navigation}){
     const{property}=route.params; //Se obtiene la propiedad seleccionada
+
+
     const openWhatsApp = () => {
       const phoneNumber = property.number;
       const url = 'https://wa.me/'+phoneNumber;
       Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
+
+    const goToSellerProfile = () => {
+      navigation.navigate('SellerProfile', {sellerNumber: property.number, sellerLocation: property.location});
+    };
     
     return (
       <SafeAreaView style= {{flex:1, backgroundColor: 'white'}}>
@@ -88,6 +95,13 @@ export default function Details({route}){
           </View>
         </View>
 
+        {/* Sección de perfil del vendedor */}
+        <View style={{alignItems: 'center', marginVertical: 20 }}>
+          <TouchableOpacity style={styles.moreInfoButton} onPress={goToSellerProfile}>
+            <Text style={{ color: 'white', marginLeft: 10 }}>Perfil del vendedor</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Sección de contacto por WhatsApp */}
         <View style={{ alignItems: 'center', marginVertical: 20 }}>
           <TouchableOpacity style={styles.whatsappButton} onPress={openWhatsApp}>
@@ -157,6 +171,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#25D366',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20
+  },
+  moreInfoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#A95534',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20

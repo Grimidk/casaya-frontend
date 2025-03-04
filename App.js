@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Home from './screens/Home';
 import Details from './screens/Details';
 import userProfile from './screens/userProfile';
+import SellerProfile from './screens/SellerProfile';
 
 export default function App() {
 
@@ -17,6 +18,7 @@ function MyStack() {
 
       <Stack.Screen name="Details" component={Details} />
       <Stack.Screen name="userProfile" component={userProfile} />
+      <Stack.Screen name="SellerProfile" component={SellerProfile}/>
     </Stack.Navigator>
   );
 }
