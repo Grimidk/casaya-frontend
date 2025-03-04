@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const FavoritesScreen = () => {
   return (
     <View style={styles.container}>
-      <Text> Favoritos </Text>
+      <Text> No tienes favoritos todavía </Text>
     </View>
   );
 };
