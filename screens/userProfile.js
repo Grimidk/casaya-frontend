@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList ,Button} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 const properties = [
    require('../assets/casa1.jpg'),
@@ -15,6 +17,25 @@ const properties = [
 ];
 
 const userProfile = () => {
+  const navigation = useNavigation(); 
+
+  const propertyData = {
+    title: "Hermosa Casa en Caracas",
+    price: "250000",
+    reviews: "5",
+    status: "disponible",
+    description: "Casa espaciosa y bien ubicada",
+    city: "Caracas",
+    municipality: "Libertador",
+    bathrooms: "3",
+    rooms: "4",
+    parking: "2",
+    numberCode: "0424",
+    number: "1234567",
+    images: ['../assets/image1.jpg']
+  };
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar backgroundColor="#A95534" />
@@ -83,6 +104,13 @@ const userProfile = () => {
               }}> Vendidas</Text>
             </View>
           </View>
+
+          {/* Botón para navegar a la pantalla de edición */}
+          <Button
+            title="Editar Propiedad"
+            onPress={() => navigation.navigate('Edit', { propertyData: propertyData })}
+            color="#A95534"
+          />
         </View>
 
         <View style={{ flex: 1 }}>

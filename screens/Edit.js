@@ -4,14 +4,14 @@ import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 
 // Componente reutilizable Dropdown
-const Dropdown = ({ label, items, onSelect }) => {
+const Dropdown = ({ label, items, onSelect, selectedValue }) => {
   const [expanded, setExpanded] = useState(false);
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded]);
 
   return (
     <View>
       <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={toggleExpanded}>
-        <Text style={styles.text}>{label}</Text>
+        <Text style={styles.text}>{selectedValue || label}</Text>
         <AntDesign name={expanded ? "caretup" : "caretdown"} size={16} />
       </TouchableOpacity>
       {expanded && (
@@ -39,52 +39,58 @@ const Dropdown = ({ label, items, onSelect }) => {
   );
 };
 
-const AddPropertyScreen = () => {
-  const [property, setProperty] = useState({
-    title: "",
-    price: "",
-    reviews: "",
-    status: "",
-    description: "",
-    city: "Caracas",
-    municipality: "",
-    bathrooms: "",
-    rooms: "",
-    parking: "",
-    numberCode: "0424", // Código de área por defecto
-    number: "",
-    images: [],
-  });
-
-  const handleChange = (field, value) => {
-    setProperty({ ...property, [field]: value });
-  };
-
-  // Seleccionar imágenes
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      setProperty({ ...property, images: [...property.images, result.assets[0].uri] });
+const EditPropertyScreen = ({ route }) => {
+    const { propertyData } = route.params; // Obtenemos propertyData de los parámetros de la ruta
+  
+    if (!propertyData) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.title}>No se han recibido datos de la propiedad.</Text>
+        </View>
+      );
     }
-  };
-
-  // Eliminar imagen
-  const removeImage = (index) => {
-    const newImages = property.images.filter((_, i) => i !== index);
-    setProperty({ ...property, images: newImages });
-  };
-
+  
+    const [property, setProperty] = useState(propertyData);
+  
+    const handleChange = (field, value) => {
+      setProperty({ ...property, [field]: value });
+    };
+  
+    // Seleccionar imágenes
+    const pickImage = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!result.canceled) {
+        setProperty({ ...property, images: [...property.images, result.assets[0].uri] });
+      }
+    };
+  
+    const removeImage = (index) => {
+        const newImages = property.images.filter((_, i) => i !== index);
+        setProperty({ ...property, images: newImages });
+      };
+      
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Agregar Nueva Propiedad</Text>
+      <Text style={styles.title}>Editar Propiedad</Text>
 
-      <TextInput style={styles.input} placeholder="Título" onChangeText={(text) => handleChange("title", text)} />
-      <TextInput style={styles.input} placeholder="Precio" keyboardType="numeric" onChangeText={(text) => handleChange("price", text)} />
+      <TextInput
+        style={styles.input}
+        placeholder="Título"
+        value={property.title}
+        onChangeText={(text) => handleChange("title", text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Precio"
+        keyboardType="numeric"
+        value={property.price}
+        onChangeText={(text) => handleChange("price", text)}
+      />
 
       <Dropdown
         label="Selecciona el estado"
@@ -93,11 +99,22 @@ const AddPropertyScreen = () => {
           { label: "Alquiler", value: "alquiler" },
           { label: "Remate", value: "remate" },
         ]}
+        selectedValue={property.status}
         onSelect={(value) => handleChange("status", value)}
       />
 
-      <TextInput style={styles.input} placeholder="Descripción" multiline onChangeText={(text) => handleChange("description", text)} />
-      <TextInput style={[styles.input, styles.disabledInput]} value="Caracas" editable={false} />
+      <TextInput
+        style={styles.input}
+        placeholder="Descripción"
+        multiline
+        value={property.description}
+        onChangeText={(text) => handleChange("description", text)}
+      />
+      <TextInput
+        style={[styles.input, styles.disabledInput]}
+        value="Caracas"
+        editable={false}
+      />
 
       <Dropdown
         label="Selecciona el municipio"
@@ -108,6 +125,7 @@ const AddPropertyScreen = () => {
           { label: "El Hatillo", value: "el_hatillo" },
           { label: "Sucre", value: "sucre" },
         ]}
+        selectedValue={property.municipality}
         onSelect={(value) => handleChange("municipality", value)}
       />
 
@@ -120,6 +138,7 @@ const AddPropertyScreen = () => {
           { label: "0412", value: "0412" },
           { label: "0212", value: "0212" },
         ]}
+        selectedValue={property.numberCode}
         onSelect={(value) => handleChange("numberCode", value)}
       />
 
@@ -129,6 +148,7 @@ const AddPropertyScreen = () => {
         placeholder="Número de teléfono"
         keyboardType="numeric"
         maxLength={7}
+        value={property.number}
         onChangeText={(text) => handleChange("number", text)}
       />
 
@@ -140,21 +160,28 @@ const AddPropertyScreen = () => {
         {property.images.map((img, index) => (
           <View key={index} style={styles.imageContainer}>
             <Image source={{ uri: img }} style={styles.image} />
-            <TouchableOpacity style={styles.deleteButton} onPress={() => removeImage(index)}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => removeImage(index)}
+            >
               <Text style={styles.deleteButtonText}>X</Text>
             </TouchableOpacity>
           </View>
         ))}
       </View>
 
-      <Button title="Guardar Propiedad" onPress={() => Alert.alert("Guardando...")} color="#A95534" />
+      <Button
+        title="Guardar Cambios"
+        onPress={() => Alert.alert("Guardando...")}
+        color="#A95534"
+      />
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "white" },
-  title: { fontSize: 22, fontWeight: "bold", textAlign: "center", marginBottom: 20, color: "#A95534", marginTop:"160" },
+  title: { fontSize: 22, fontWeight: "bold", textAlign: "center", marginBottom: 20, color: "#A95534" },
   input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 5, padding: 10, marginBottom: 10 },
   disabledInput: { backgroundColor: "#f0f0f0", color: "gray" },
   imageButton: { backgroundColor: "#A95534", padding: 10, borderRadius: 5, alignItems: "center", marginBottom: 10 },
@@ -170,4 +197,4 @@ const styles = StyleSheet.create({
   separator: { height: 1, backgroundColor: "#ccc" }
 });
 
-export default AddPropertyScreen;
+export default EditPropertyScreen;
