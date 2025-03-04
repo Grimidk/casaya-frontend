@@ -18,9 +18,9 @@ import { UserContext, UserProvider } from './context/UserContext';
 import { View } from 'react-native';
 import RegisterScreen from './screens/RegisterScreen';
 
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
 
 function HomeStack() {
   return (
@@ -28,12 +28,10 @@ function HomeStack() {
       screenOptions={{
         headerShown: true, // Cambiado a true para mostrar el header
         headerRight: () => (
-          
-            <Image
-              source={require('./assets/logo.png')}
-              style={{ width: 40, height: 40, marginRight: 10 }}
-            />
-          
+          <Image
+            source={require('./assets/logo.png')} 
+            style={{ width: 40, height: 40, marginRight: 10 }}
+          />
         ),
         headerStyle:{
           backgroundColor:'#A95534'
@@ -46,6 +44,7 @@ function HomeStack() {
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       <Stack.Screen name="Edit" component={Edit} /> 
+
     </Stack.Navigator>
   );
 }

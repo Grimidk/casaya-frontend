@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList ,Button} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+
 const properties = [
    require('../assets/casa1.jpg'),
    require('../assets/casa2.jpg'),

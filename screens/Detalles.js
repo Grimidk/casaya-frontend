@@ -17,14 +17,15 @@ export default function Detalles({route}){
       <SafeAreaView style= {{flex:1, backgroundColor: 'white'}}>
         <StatusBar translucent backgroundColor = "rgba(0,0,0,0)"/>
         <View style={{height:400}}>
-          <ImageBackground source={property.image2} resizeMode='cover' style={{height:400}}></ImageBackground>
+          <ImageBackground source={{ uri: property.images[0] }} resizeMode='cover' style={{height:400}}></ImageBackground>
         </View>
         <ScrollView> 
           {/*Seccion de titulo*/}
           <View style={styles.containerTitle}>
-            <Text style={styles.textTitle}>{property.title}</Text>
-            <Text style={styles.textTitle}>{property.price}</Text>
+            <Text style={styles.textTitle}>{property.name}</Text>
+            <Text style={styles.textTitle}>{property.price + "$"}</Text>
           </View>
+
 
           {/*Seccion de subtitulo */}
           <View style={styles.containerSubtitle}>
@@ -51,6 +52,7 @@ export default function Detalles({route}){
               <Text style= {{color:'slategray', fontSize:15}}>{property.bathrooms} </Text>
             </View>
 
+
             <View>
               <Icon name='car' type='font-awesome' size={20} color={'gray'}/>
               <Text style ={{color:'slategray', fontSize:15}}> {property.parking} </Text>
@@ -69,6 +71,7 @@ export default function Detalles({route}){
               <Icon name='car' type='font-awesome' size={20} color={"gray"} />
               <Text style={styles.facilityText}>Puestos</Text>
             </View>
+
 
             <View style={styles.facilityItem}>
               <Icon name='camera' type='font-awesome' size={20} color={"gray"} />
