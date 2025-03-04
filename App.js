@@ -7,12 +7,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons'; // Usando Ionicons de @expo/vector-icons
 import Home from './screens/Home';
 import Detalles from './screens/Detalles';
-import userProfile from './screens/userProfile'; // Asegúrate de que la mayúscula es correcta
+import userProfile from './screens/userProfile'; 
 import welcome from './screens/welcome';
 import splashScreen from './screens/splashScreen';
 import Favorites from './screens/Favorites';
 import Upload from './screens/Upload';
 import LoginScreen from './screens/LoginScreen';
+import Edit from './screens/Edit'
 import { UserContext, UserProvider } from './context/UserContext';
 import { View } from 'react-native';
 import RegisterScreen from './screens/RegisterScreen';
@@ -44,6 +45,7 @@ function HomeStack() {
       <Stack.Screen name="Detalles" component={Detalles} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <Stack.Screen name="Edit" component={Edit} /> 
     </Stack.Navigator>
   );
 }
@@ -87,6 +89,7 @@ export default function App() {
           <Stack.Screen name="MyTabs" component={MyTabs} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+          <Stack.Screen name="Edit" component={Edit}/>
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>
