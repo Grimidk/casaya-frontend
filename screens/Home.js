@@ -1,113 +1,88 @@
-import React, { Component } from 'react'
+
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   StyleSheet,
   View,
   SafeAreaView,
   StatusBar,
-  Image,
   TextInput,
   ScrollView,
-  TouchableOpacity,
-  ImageBackground,
 } from "react-native";
-import PropertyCard from '../components/PropertyCard'
+import axios from 'axios';
+import PropertyCard from '../components/PropertyCard';
 
+export default function Home({ navigation }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredProperties, setFilteredProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Cargar propiedades 
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get('http://casaya-back-backup-production.up.railway.app/properties'); 
+        setFilteredProperties(response.data);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProperties();
+  }, []);
 
-export default function Home({navigation})   {
+  const searchProperty = (query) => {
+    setSearchQuery(query);
+    if (query) {
+      const filtered = filteredProperties.filter(property => 
+        property.location.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredProperties(filtered);
+    } else {
+      setFilteredProperties(filteredProperties);
+    }
+  };
 
-  const properties = [
-    {
-      id: 1,
-      image: require('../assets/image1.jpg'),
-      image2: require('../assets/image4.jpg'),
-      title: 'Casa en la playa',
-      price: '$500,000',
-      reviews: '4.8',
-      status: ' Venta',
-      description: 'Casa lujosa en la playa con vista al mar.',
-      location: 'Margarita, Pampatar',
-      bathrooms:'2',
-      rooms: '2',
-      parking:'1',
-      number:'+584241818540'
-       
-    },
-    {
-      id: 2,
-      image: require('../assets/image2.jpg'),
-      image2: require('../assets/image5.jpeg'),
-      title: 'Casa en la ciudad',
-      price: '$150,000',
-      reviews: '4.5',
-      status: 'Remate',
-      description: 'Casa moderna alejada del centro de la ciudad.',
-      location: 'Caracas, La Miranda',
-      bathrooms:'2',
-      rooms: '3',
-      parking:'2',
-      number:'+584241818540'
-    },
-    {
-      id: 3,
-      image: require('../assets/image3.jpg'),
-      image2: require('../assets/image6.jpg'),
-      title: 'Chalet en las montañas',
-      price: '$700,000',
-      reviews: '4.9',
-      status: ' Venta',
-      description: 'Chalet acogedor en las montañas con vistas impresionantes.',
-      location: 'Caracas, La Lagunita',
-      bathrooms:'3',
-      rooms: '4',
-      parking:'2',
-      number:'+584241818540'
-    },
-  ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <StatusBar
-        translucent={false}
-        backgroundColor={"#fff"}
-        barStyle={"dark-content"}
-      />
-      <View style={styles.header}>
-        <Text style={styles.textoProfile}>Buscar Propiedad</Text>
-        <Image
-          source={require("../assets/profile1.jpg")}
-          style={styles.profileImage}
+      <StatusBar translucent={false} backgroundColor={"#fff"} barStyle={"dark-content"} />
+      
+      <View style={styles.inputContainer}>
+        <TextInput 
+          placeholder="Buscar por ciudad..." 
+          onChangeText={searchProperty} 
+          value={searchQuery}
         />
       </View>
 
-      <View style={styles.inputContainer}>
-        
-        <TextInput placeholder="        Filtrar por condición" />
-      </View>
-
-      <Text style={styles.result}> {properties.length} Resultados Encontrados</Text>
-      {/* la lista de las imagenes */}
-      <ScrollView>
-      
-        <View style={styles.container}>
-        {properties.map((property) => (
-          <PropertyCard
-            key={property.id}
-            image={property.image}
-            title={property.title}
-            price={property.price}
-            reviews={property.reviews}
-            status={property.status} 
-            onPress={() => {navigation.navigate('Detalles', { property });
-              }}
-          />
-        ))}
-      </View>
-
-      </ScrollView>
-
+      {loading ? (
+        <Text>Cargando propiedades...</Text>
+      ) : (
+        <>
+          <Text style={styles.result}> {filteredProperties.length} Resultados Encontrados</Text>
+          <ScrollView>
+            <View style={styles.container}>
+            {filteredProperties.map((property) => (
+              <PropertyCard
+                key={property.id}
+                image={{ uri: property.images[0] }}  //toma la primera imagen del array
+                title={property.name}
+                price={property.price}
+                reviews={property.reviews}
+                status={property.status}
+                onPress={() => { navigation.navigate('Detalles', { property }); }}
+              />
+              ))}
+            </View>
+          </ScrollView>
+        </>
+      )}
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   header:{
@@ -127,15 +102,24 @@ const styles = StyleSheet.create({
     fontSize:22,
     fontWeight:'bold'
   },
-  inputContainer: {
+ inputContainer: {
     width: '100%',
     backgroundColor: 'white',
-    borderRadius: 12,
+    borderRadius: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom:30,
-    borderBottomWidth:0.5,
-    borderBottomColor:'slategray'
+    marginBottom:20,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'slategray',
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
+    alignSelf: 'center',
+  
+
   },
   result:{
     fontSize:18,
@@ -177,4 +161,4 @@ const styles = StyleSheet.create({
   contenedorReview:{
     flexDirection:'row',
   }
-})
+});
