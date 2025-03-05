@@ -6,6 +6,8 @@ import Home from './screens/Home';
 import Details from './screens/Details';
 import userProfile from './screens/userProfile';
 import SellerProfile from './screens/SellerProfile';
+import BuyerProfile from './screens/BuyerProfile';
+
 
 export default function App() {
 
@@ -19,6 +21,7 @@ function MyStack() {
       <Stack.Screen name="Details" component={Details} />
       <Stack.Screen name="userProfile" component={userProfile} />
       <Stack.Screen name="SellerProfile" component={SellerProfile}/>
+      <Stack.Screen name="BuyerProfile" component={BuyerProfile} />
     </Stack.Navigator>
   );
 }

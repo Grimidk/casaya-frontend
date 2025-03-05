@@ -28,7 +28,7 @@ const properties = [
     bathrooms:'2',
     rooms: '2',
     parking:'1',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 2,
@@ -43,7 +43,7 @@ const properties = [
     bathrooms:'2',
     rooms: '3',
     parking:'2',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 3,
@@ -58,7 +58,7 @@ const properties = [
     bathrooms:'3',
     rooms: '4',
     parking:'2',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 4,
@@ -73,7 +73,7 @@ const properties = [
     bathrooms:'4',
     rooms: '4',
     parking:'3',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 5,
@@ -88,7 +88,7 @@ const properties = [
     bathrooms:'3',
     rooms: '4',
     parking:'2',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 6,
@@ -103,7 +103,7 @@ const properties = [
     bathrooms:'5',
     rooms: '5',
     parking:'2',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 7,
@@ -118,7 +118,7 @@ const properties = [
     bathrooms:'3',
     rooms: '4',
     parking:'1',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 8,
@@ -133,7 +133,7 @@ const properties = [
     bathrooms:'5',
     rooms: '6',
     parking:'3',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 9,
@@ -148,7 +148,7 @@ const properties = [
     bathrooms:'3',
     rooms: '4',
     parking:'2',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   },
   {
     id: 10,
@@ -163,7 +163,7 @@ const properties = [
     bathrooms:'5',
     rooms: '6',
     parking:'4',
-    number:'+584241818540'
+    number:'+58(424)1818540'
   }
 ];
 

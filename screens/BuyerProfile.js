@@ -1,50 +1,90 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, FlatList } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
 const savedProperties = [
-  require('../assets/casa10.jpg'),
-  require('../assets/casa11.jpg'),
-  require('../assets/casa12.jpg'),
-  require('../assets/casa13.jpg'),
-  require('../assets/casa14.jpg'),
-  require('../assets/casa15.jpg'),
-  require('../assets/casa16.jpg'),
-  require('../assets/casa17.jpg'),
-  require('../assets/casa18.jpg'),
+  require('../assets/casa9.jpg'),
+  require('../assets/casa8.jpg'),
+  require('../assets/casa7.jpg'),
+  require('../assets/casa4.jpg'),
+  require('../assets/casa5.jpg'),
+  require('../assets/casa6.jpg'),
 ];
 
-const buyerProfile = () => {
+const getRandomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const BuyerProfile = () => {
+  const route = useRoute();
+  const { username } = route.params || {};
+  const [status, setStatus] = useState('Buscando una Casa'); 
+  const [viewedProperties, setViewedProperties] = useState(0);
+  const [userEmail, setUserEmail] = useState('');
+  const [userPhone, setUserPhone] = useState('');
+  const [userLocation, setUserLocation] = useState('');
+
+  useEffect(() => {
+    setViewedProperties(getRandomInt(10, 50));
+
+    // Set userEmail and userPhone based on username
+    switch (username) {
+      case 'Ana Pérez':
+        setUserEmail('ana.perez@email.com');
+        setUserPhone('+58(414)1234567');
+        setUserLocation('Caracas, La Trinidad');
+        break;
+      case 'Rodrigo Gonsalves':
+        setUserEmail('rodrigo.gonsalves@email.com');
+        setUserPhone('+58(412)9876543');
+        setUserLocation('Caracas, Altamira');
+        break;
+      case 'María López':
+        setUserEmail('maria.lopez@email.com');
+        setUserPhone('+58(424)0987681');
+        setUserLocation('La Guaira, Catia La Mar');
+        break;
+      default:
+        setUserEmail('default.email@email.com');
+        setUserPhone('+58(414)0000000');
+        setUserLocation('Caracas, El Centro');
+        break;
+    }
+  }, [username]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar backgroundColor="#A95534" />
-      <View
-        style={{
-          backgroundColor: '#A95534',
-          height: 228,
-          width: '100%',
-        }}
-      />
+      <View style={{ backgroundColor: '#A95534', height: 228, width: '100%' }} />
 
       <View style={{ flex: 1, alignItems: 'center' }}>
         <Image
-          source={require('../assets/profile2.jpg')} 
+          source={require('../assets/profile1.jpg')} 
           resizeMode="contain" 
           style={styles.profileImage}
         />
 
-        <Text style={styles.userName}>Maria Gonzalez</Text>
-        <Text style={styles.userEmail}>maria.gonzalez@email.com</Text>
+        <Text style={styles.userName}>{username}</Text>
+        <Text style={styles.userEmail}>{userEmail}</Text>
+        <Text style={styles.userEmail}>{userPhone}</Text>
+        <Text style={styles.userEmail}>{userLocation}</Text>
 
         <View style={styles.statsContainer}>
           <View style={styles.stat}>
-            <Text style={styles.statNumber}>58</Text>
-            <Text style={styles.statLabel}>Saved Listings</Text>
+            <Text style={styles.statNumber}>{savedProperties.length}</Text>
+            <Text style={styles.statLabel}>Propiedades Guardadas</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statNumber}>12</Text>
-            <Text style={styles.statLabel}>Viewed</Text>
+            <Text style={styles.statNumber}>{viewedProperties}</Text>
+            <Text style={styles.statLabel}>Propiedades Vistas</Text>
           </View>
+        </View>
+
+        {/* Status Section */}
+        <View style={styles.statusContainer}>
+          <Text style={styles.statusLabel}>Estado:</Text>
+          <Text style={styles.statusText}>{status}</Text>
         </View>
       </View>
 
@@ -78,6 +118,7 @@ const styles = StyleSheet.create({
   userName: {
     color: "#A69D9D",
     marginVertical: 8,
+    fontSize: 22,
   },
   userEmail: {
     color: "#A69D9D",
@@ -98,6 +139,19 @@ const styles = StyleSheet.create({
   statLabel: {
     color: "#A69D9D",
   },
+  statusContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  statusLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#A95534',
+  },
+  statusText: {
+    fontSize: 16,
+    color: '#555',
+  },
   galleryContainer: {
     paddingBottom: 20,
     paddingHorizontal: 10,
@@ -115,4 +169,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default buyerProfile;
+export default BuyerProfile;
