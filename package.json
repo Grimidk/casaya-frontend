@@ -16,9 +16,7 @@
     "@react-navigation/stack": "^7.1.1",
     "@rneui/base": "github:react-native-elements/react-native-elements#base",
     "@rneui/themed": "github:react-native-elements/react-native-elements#themed",
-
     "axios": "^1.8.1",
-
     "expo": "~52.0.33",
     "expo-image-picker": "^16.0.6",
     "expo-modules-core": "~2.2.2",
