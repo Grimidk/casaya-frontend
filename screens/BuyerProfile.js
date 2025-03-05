@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, FlatList } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 
 const savedProperties = [
@@ -55,53 +55,55 @@ const BuyerProfile = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <StatusBar backgroundColor="#A95534" />
-      <View style={{ backgroundColor: '#A95534', height: 228, width: '100%' }} />
+      <StatusBar backgroundColor="#A95534" /> 
+      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+        <View style={{ backgroundColor: '#A95534', height: 228, width: '100%' }} />
 
-      <View style={{ flex: 1, alignItems: 'center' }}>
-        <Image
-          source={require('../assets/profile1.jpg')} 
-          resizeMode="contain" 
-          style={styles.profileImage}
-        />
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Image
+            source={require('../assets/profile1.jpg')} 
+            resizeMode="contain" 
+            style={styles.profileImage}
+          />
 
-        <Text style={styles.userName}>{username}</Text>
-        <Text style={styles.userEmail}>{userEmail}</Text>
-        <Text style={styles.userEmail}>{userPhone}</Text>
-        <Text style={styles.userEmail}>{userLocation}</Text>
+          <Text style={styles.userName}>{username}</Text>
+          <Text style={styles.userEmail}>{userEmail}</Text>
+          <Text style={styles.userEmail}>{userPhone}</Text>
+          <Text style={styles.userEmail}>{userLocation}</Text>
 
-        <View style={styles.statsContainer}>
-          <View style={styles.stat}>
-            <Text style={styles.statNumber}>{savedProperties.length}</Text>
-            <Text style={styles.statLabel}>Propiedades Guardadas</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statNumber}>{viewedProperties}</Text>
-            <Text style={styles.statLabel}>Propiedades Vistas</Text>
-          </View>
-        </View>
-
-        {/* Status Section */}
-        <View style={styles.statusContainer}>
-          <Text style={styles.statusLabel}>Estado:</Text>
-          <Text style={styles.statusText}>{status}</Text>
-        </View>
-      </View>
-
-      <View style={{ flex: 0 }}>
-        {/* Display saved properties in a 3x3 grid */}
-        <FlatList
-          data={savedProperties}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={3}
-          renderItem={({ item }) => (
-            <View style={styles.propertyContainer}>
-              <Image source={item} style={styles.propertyImage} />
+          <View style={styles.statsContainer}>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{savedProperties.length}</Text>
+              <Text style={styles.statLabel}>Propiedades Guardadas</Text>
             </View>
-          )}
-          contentContainerStyle={styles.galleryContainer}
-        />
-      </View>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{viewedProperties}</Text>
+              <Text style={styles.statLabel}>Propiedades Vistas</Text>
+            </View>
+          </View>
+
+          {/* Status Section */}
+          <View style={styles.statusContainer}>
+            <Text style={styles.statusLabel}>Estado:</Text>
+            <Text style={styles.statusText}>{status}</Text>
+          </View>
+        </View>
+
+        <View style={{ flex: 0 }}>
+          {/* Display saved properties in a 3x3 grid */}
+          <FlatList
+            data={savedProperties}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={3}
+            renderItem={({ item }) => (
+              <View style={styles.propertyContainer}>
+                <Image source={item} style={styles.propertyImage} />
+              </View>
+            )}
+            contentContainerStyle={styles.galleryContainer}
+          />
+        </View>
+     </ScrollView>
     </SafeAreaView>
   );
 };
