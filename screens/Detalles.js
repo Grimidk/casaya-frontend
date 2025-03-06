@@ -1,15 +1,14 @@
 import React, {Component} from 'react'
 import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,ScrollView, TouchableOpacity, Linking} from 'react-native'
 import {Icon} from '@rneui/themed';
-
-;
-
+import { useNavigation } from '@react-navigation/native';
 
 export default function Detalles({route}){
     const { property } = route.params; //Se obtiene la propiedad seleccionada
+    const navigation = useNavigation();
     const openWhatsApp = () => {
       const phoneNumber = property.number;
-      const userId = property.user.user_id;
+      const userId = 10;
       const url = 'https://wa.me/'+phoneNumber;
       Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
