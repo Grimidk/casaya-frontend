@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  Image
+  Image,
 } from 'react-native';
 import axios from 'axios';
 
@@ -18,12 +18,35 @@ const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [gender, setGender] = useState(''); // Campo de texto para el género
-  const [userType, setUserType] = useState(''); // Campo de texto para el tipo de usuario
   const [password, setPassword] = useState(''); // Campo para la contraseña
 
-  const handleRegister = async  () => {
+  // Función para validar la contraseña
+  const validatePassword = (password) => {
+    // Mínimo 8 caracteres
+    const hasMinLength = password.length >= 8;
+
+    // Al menos una letra
+    const hasLetter = /[a-zA-Z]/.test(password);
+
+    // Al menos un número
+    const hasNumber = /\d/.test(password);
+
+    // Retorna true si cumple con todos los requisitos
+    return hasMinLength && hasLetter && hasNumber;
+  };
+
+  const handleRegister = async () => {
     if (!name || !email || !phone || !gender || !password) {
       Alert.alert('Error', 'Por favor, completa todos los campos.');
+      return;
+    }
+
+    // Validar la contraseña
+    if (!validatePassword(password)) {
+      Alert.alert(
+        'Error',
+        'La contraseña debe tener al menos 8 caracteres, incluyendo letras y números.',
+      );
       return;
     }
 
@@ -61,6 +84,12 @@ const RegisterScreen = ({ navigation }) => {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={() => navigation.goBack()} 
+                >
+                  <Text style={styles.backButton}>Atrás</Text>
+                </TouchableOpacity>
         <Image source={require('../assets/logo.png')} style={styles.logo} />
         <Text style={styles.title}>Registro</Text>
 
@@ -98,14 +127,6 @@ const RegisterScreen = ({ navigation }) => {
           value={gender}
           onChangeText={setGender}
         />
-
-        {/* Input para el tipo de usuario */}
-        {/* <TextInput
-          style={styles.input}
-          placeholder="Tipo de usuario (Inquilino o Propietario)"
-          value={userType}
-          onChangeText={setUserType}
-        /> */}
 
         {/* Input para la contraseña */}
         <TextInput
@@ -168,6 +189,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },backButton: {
+    position: 'absolute', 
+    top: 40, 
+    left: 20, 
+    zIndex: 1, 
   },
   linkText: {
     marginTop: 10,
@@ -182,7 +208,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginBottom: 20,
     marginTop: -20,
-  }
+  },
 });
 
 export default RegisterScreen;

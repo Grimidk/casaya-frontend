@@ -152,6 +152,9 @@ const userProfile = ({ route }) => {
             contentContainerStyle={styles.galleryContainer}
           />
         </View>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButton}>Cerrar Sesión</Text>
+      </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

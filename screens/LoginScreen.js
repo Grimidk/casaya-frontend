@@ -41,6 +41,12 @@ const LoginScreen = ({ navigation }) => {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()} // Navegar hacia atrás
+        >
+          <Text style={styles.backButton}>Atrás</Text>
+        </TouchableOpacity>
         <Image source={require('../assets/logo.png')} style={styles.logo} />
         <Text style={styles.welcomeText}>Iniciar Sesión</Text>
 
@@ -118,6 +124,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  backButton: {
+    position: 'absolute', 
+    top: 40, 
+    left: 20, 
+    zIndex: 1, 
   },
   registerText: {
     marginTop: 10,
