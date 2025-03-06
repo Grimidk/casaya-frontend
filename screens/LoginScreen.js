@@ -11,8 +11,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../context/UserContext';
-
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -25,14 +25,28 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
 
+    const fetchUserIdByEmail = async (email) => {
+      const response = await fetch(`https://casaya-back-backup-production.up.railway.app/users?email=${email}`);
+      const data = await response.json();
+      if (data) {
+        console.log("User ID:", data.user_id);
+        return data.user_id;
+      }
+      console.log("User ID: undefined");
+      return undefined;
+    };
+
     const isLoggedIn = await login(email, password); // Llamar a la función de login
     if (isLoggedIn) {
+      const userId = await fetchUserIdByEmail(email);
+      await AsyncStorage.setItem('userId', userId);
+      console.log("Logged in User ID:", userId);
       navigation.navigate('MyTabs'); // Redirigir al usuario a la pantalla principal
     } else {
+      console.log("Logged in User ID: null");
       Alert.alert('Error', 'Correo o contraseña incorrectos');
     }
   };
-  
 
   return (
     <KeyboardAvoidingView
