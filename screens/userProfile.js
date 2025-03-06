@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList, Button } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -55,20 +55,15 @@ const userProfile = ({ route }) => {
     return data;
   };
 
-  const propertyData = {
-    title: "Hermosa Casa en Caracas",
-    price: "250000",
-    reviews: "5",
-    status: "disponible",
-    description: "Casa espaciosa y bien ubicada",
-    city: "Caracas",
-    municipality: "Libertador",
-    bathrooms: "3",
-    rooms: "4",
-    parking: "2",
-    numberCode: "0424",
-    number: "1234567",
-    images: ['../assets/image1.jpg']
+  const propertyData = async (userId) => {
+    const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${userId}`);
+    const data = await response.json();
+    return data;
+  };
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('userId');
+    navigation.navigate('LoginScreen');
   };
 
   if (!isLoggedIn && isGuest) {
@@ -123,11 +118,11 @@ const userProfile = ({ route }) => {
 
           <View style={styles.statsContainer}>
             <View style={styles.stat}>
-              <Text style={styles.statNumber}>122</Text>
+              <Text style={styles.statNumber}>{propertyData.length}</Text>
               <Text style={styles.statLabel}>Propiedades</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={styles.statNumber}>67</Text>
+              <Text style={styles.statNumber}>{propertyData.length - 1}</Text>
               <Text style={styles.statLabel}>Vendidas</Text>
             </View>
           </View>
@@ -153,8 +148,8 @@ const userProfile = ({ route }) => {
           />
         </View>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutButton}>Cerrar Sesión</Text>
-      </TouchableOpacity>
+          <Text style={styles.logoutButton}>Cerrar Sesión</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
