@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList ,Button} from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList ,Button,TouchableOpacity} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { UserContext } from '../context/UserContext';
 
 const properties = [
    require('../assets/casa1.jpg'),
@@ -18,7 +18,11 @@ const properties = [
 
 const userProfile = () => {
   const navigation = useNavigation(); 
-
+  const { user, logout } = useContext(UserContext);
+  const handleLogout = () => {
+    logout(); // Cerrar sesión
+    navigation.navigate('welcome'); // Redirigir al usuario a la pantalla de bienvenida
+  };
   const propertyData = {
     title: "Hermosa Casa en Caracas",
     price: "250000",
@@ -127,6 +131,9 @@ const userProfile = () => {
             contentContainerStyle={styles.galleryContainer}
           />
         </View>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButton}>Cerrar Sesión</Text>
+      </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   )
@@ -141,6 +148,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  logoutButton: {
+    marginTop: 30, 
+    backgroundColor: '#A95534', 
+    paddingVertical: 15, 
+    paddingHorizontal: 30, 
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
   },
   text: {
     fontSize: 24,
