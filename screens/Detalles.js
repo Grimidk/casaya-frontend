@@ -9,8 +9,13 @@ export default function Detalles({route}){
     const { property } = route.params; //Se obtiene la propiedad seleccionada
     const openWhatsApp = () => {
       const phoneNumber = property.number;
+      const userId = property.user.user_id;
       const url = 'https://wa.me/'+phoneNumber;
       Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
+  };
+
+  const goToSellerProfile = () => {
+    navigation.navigate('userProfile', {sellerNumber: userId});
   };
 
     return (
@@ -87,6 +92,12 @@ export default function Detalles({route}){
               <Icon name='minus' type='font-awesome' size={20} color={"gray"} />
               <Text style={styles.facilityText}>AC</Text>
             </View>
+          </View>
+
+          <View style={{alignItems: 'center', marginVertical: 20 }}>
+            <TouchableOpacity style={styles.moreInfoButton} onPress={goToSellerProfile}>
+              <Text style={{ color: 'white', marginLeft: 10 }}>Perfil del vendedor</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Sección de contacto por WhatsApp */}
