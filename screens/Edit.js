@@ -181,21 +181,22 @@ const EditPropertyScreen = ({ route }) => {
 
 const updateProperty = async () => {
   try {
-    const response = await fetch("https://casaya-back-backup-production.up.railway.app/properties/2/1", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(property), // Enviamos el objeto property como JSON
-    });
+    const response = await axios.patch(
+      "https://casaya-back-backup-production.up.railway.app/properties/1/9", 
+      property, // Enviamos el objeto property directamente como el cuerpo
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    if (response.ok) {
-      const data = await response.json();
+    if (response.status === 200) { // Verificamos si el código de estado es 200
       Alert.alert("Éxito", "La propiedad se actualizó correctamente.");
-      console.log("Respuesta del backend:", data);
+      console.log("Respuesta del backend:", response.data);
     } else {
       Alert.alert("Error", "No se pudo actualizar la propiedad.");
-      console.error("Error del backend:", await response.text());
+      console.error("Error del backend:", response.data);
     }
   } catch (error) {
     Alert.alert("Error", "Ocurrió un problema al conectar con el servidor.");
