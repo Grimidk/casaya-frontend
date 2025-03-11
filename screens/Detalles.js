@@ -8,7 +8,7 @@ import {Icon} from '@rneui/themed';
 export default function Detalles({route}){
     const { property } = route.params; //Se obtiene la propiedad seleccionada
     const openWhatsApp = () => {
-      const phoneNumber = property.number;
+      const phoneNumber = '+584241818540';
       const url = 'https://wa.me/'+phoneNumber;
       Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
