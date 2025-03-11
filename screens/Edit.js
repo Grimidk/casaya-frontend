@@ -171,30 +171,124 @@ const EditPropertyScreen = ({ route }) => {
       </View>
 
       <Button
-        title="Guardar Cambios"
-        onPress={() => Alert.alert("Guardando...")}
-        color="#A95534"
+      title="Guardar Cambios"
+      onPress={updateProperty}
+      color="#A95534"
       />
     </ScrollView>
   );
 };
 
+const updateProperty = async () => {
+  try {
+    const response = await fetch("https://casaya-back-backup-production.up.railway.app/properties/2/1", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(property), // Enviamos el objeto property como JSON
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      Alert.alert("Éxito", "La propiedad se actualizó correctamente.");
+      console.log("Respuesta del backend:", data);
+    } else {
+      Alert.alert("Error", "No se pudo actualizar la propiedad.");
+      console.error("Error del backend:", await response.text());
+    }
+  } catch (error) {
+    Alert.alert("Error", "Ocurrió un problema al conectar con el servidor.");
+    console.error("Error al realizar la solicitud:", error);
+  }
+};
+
+
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "white" },
-  title: { fontSize: 22, fontWeight: "bold", textAlign: "center", marginBottom: 20, color: "#A95534" },
-  input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 5, padding: 10, marginBottom: 10 },
-  disabledInput: { backgroundColor: "#f0f0f0", color: "gray" },
-  imageButton: { backgroundColor: "#A95534", padding: 10, borderRadius: 5, alignItems: "center", marginBottom: 10 },
-  imageButtonText: { color: "white", fontSize: 16 },
-  imagePreview: { flexDirection: "row", flexWrap: "wrap" },
-  imageContainer: { position: "relative", margin: 5 },
-  image: { width: 80, height: 80, borderRadius: 5 },
-  deleteButton: { position: "absolute", top: -5, right: -5, backgroundColor: "#A95534", borderRadius: 10, width: 20, height: 20, alignItems: "center", justifyContent: "center" },
-  deleteButtonText: { color: "white", fontSize: 12, fontWeight: "bold" },
-  button: { flexDirection: "row", alignItems: "center", padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 5, marginBottom: 10, justifyContent: "space-between" },
-  options: { borderWidth: 1, borderColor: "#ccc", borderRadius: 5, backgroundColor: "white" },
-  optionItem: { padding: 10 },
-  separator: { height: 1, backgroundColor: "#ccc" }
+  container: { 
+    flex: 1, 
+    padding: 20, 
+    backgroundColor: "white" 
+  },
+  title: { 
+    fontSize: 22, 
+    fontWeight: "bold",
+     textAlign: "center", 
+     marginBottom: 40, 
+     color: "#A95534" ,
+      marginTop:40
+    },
+  input: { 
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10, 
+    marginBottom: 10 
+  },
+  disabledInput: { 
+    backgroundColor: "#f0f0f0",
+    color: "gray"
+   },
+  imageButton: { 
+    backgroundColor: "#A95534",
+     padding: 10, borderRadius: 5, 
+     alignItems: "center",
+      marginBottom: 10 
+    },
+  imageButtonText: { 
+    color: "white", 
+    fontSize: 16
+   },
+  imagePreview: {
+    flexDirection: "row", flexWrap: "wrap" 
+  },
+    imageContainer: { 
+      position: "relative", 
+      margin: 5 
+    },
+    image: { 
+      width: 80,
+      height: 80, 
+      borderRadius: 5 
+    },
+    deleteButton: { 
+      position: "absolute", 
+      top: -5,
+      right: -5,
+      backgroundColor: "#A95534",
+      borderRadius: 10, 
+      width: 20, 
+      height: 20,
+      alignItems: "center", 
+      justifyContent: "center" 
+    },
+    deleteButtonText: { 
+      color: "white", 
+      fontSize: 12, 
+      fontWeight: "bold" 
+    },
+    button: { 
+      flexDirection: "row", 
+      alignItems: "center",
+      padding: 10, 
+      borderWidth: 1, 
+      borderColor: "#ccc", 
+      borderRadius: 5, 
+      marginBottom: 10,
+      justifyContent: "space-between"
+     },
+    options: {
+      borderWidth: 1, 
+      borderColor: "#ccc", 
+      borderRadius: 5, 
+      backgroundColor: "white"
+     },
+    optionItem: {
+      padding: 10
+     },
+    separator: { 
+      height: 1,
+      backgroundColor: "#ccc" }
 });
 
 export default EditPropertyScreen;

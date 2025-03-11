@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 
@@ -19,6 +20,7 @@ import axios from 'axios';
        console.log('Respuesta del backend:', response.data);
        if (response.data) {
          setUser(response.data); // Guardar los datos del usuario en el estado
+         await AsyncStorage.setItem('userId', response.data.user_id.toString()); 
          return true; // Credenciales correctas
        } else {
          return false; // Credenciales incorrectas

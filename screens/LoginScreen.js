@@ -11,8 +11,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../context/UserContext';
-
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -27,12 +27,13 @@ const LoginScreen = ({ navigation }) => {
 
     const isLoggedIn = await login(email, password); // Llamar a la función de login
     if (isLoggedIn) {
+      console.log("Logged in User ID:", await AsyncStorage.getItem('userId'));
       navigation.navigate('MyTabs'); // Redirigir al usuario a la pantalla principal
     } else {
+      console.log("Logged in User ID: null");
       Alert.alert('Error', 'Correo o contraseña incorrectos');
     }
   };
-  
 
   return (
     <KeyboardAvoidingView
@@ -40,6 +41,12 @@ const LoginScreen = ({ navigation }) => {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()} // Navegar hacia atrás
+        >
+          <Text style={styles.backButton}>Atrás</Text>
+        </TouchableOpacity>
         <Image source={require('../assets/logo.png')} style={styles.logo} />
         <Text style={styles.welcomeText}>Iniciar Sesión</Text>
 
@@ -117,6 +124,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  backButton: {
+    position: 'absolute', 
+    top: 40, 
+    left: 20, 
+    zIndex: 1, 
   },
   registerText: {
     marginTop: 10,
