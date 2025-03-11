@@ -11,8 +11,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../context/UserContext';
-
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -27,12 +27,13 @@ const LoginScreen = ({ navigation }) => {
 
     const isLoggedIn = await login(email, password); // Llamar a la función de login
     if (isLoggedIn) {
+      console.log("Logged in User ID:", await AsyncStorage.getItem('userId'));
       navigation.navigate('MyTabs'); // Redirigir al usuario a la pantalla principal
     } else {
+      console.log("Logged in User ID: null");
       Alert.alert('Error', 'Correo o contraseña incorrectos');
     }
   };
-  
 
   return (
     <KeyboardAvoidingView

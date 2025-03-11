@@ -7,17 +7,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons'; // Usando Ionicons de @expo/vector-icons
 import Home from './screens/Home';
 import Detalles from './screens/Detalles';
-import userProfile from './screens/userProfile'; 
+import UserProfile from './screens/UserProfile'; 
 import welcome from './screens/welcome';
 import splashScreen from './screens/splashScreen';
 import Favorites from './screens/Favorites';
 import Upload from './screens/Upload';
 import LoginScreen from './screens/LoginScreen';
-import Edit from './screens/Edit'
+import Edit from './screens/Edit';
+import UserProfileAux from './screens/UserProfileAux';
 import { UserContext, UserProvider } from './context/UserContext';
 import { View } from 'react-native';
 import RegisterScreen from './screens/RegisterScreen';
-
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,10 +44,15 @@ function HomeStack() {
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       <Stack.Screen name="Edit" component={Edit} /> 
-
+      <Stack.Screen 
+        name="UserProfileAux" 
+        component={UserProfileAux} 
+        options={{ title: 'Perfil de Usuario' }}
+      />
     </Stack.Navigator>
   );
 }
+
 function MyTabs() {
   return (
     <Tab.Navigator
@@ -73,7 +78,7 @@ function MyTabs() {
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Favorites" component={Favorites} />
       <Tab.Screen name="Upload" component={Upload} />
-      <Tab.Screen name="Perfil" component={userProfile} /> 
+      <Tab.Screen name="Perfil" component={UserProfile} /> 
     </Tab.Navigator>
   );
 }

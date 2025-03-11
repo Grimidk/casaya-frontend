@@ -1,21 +1,26 @@
 import React from 'react';
-import { View, Text, Image, Button, StyleSheet,TouchableOpacity } from 'react-native';
+import { View, Text, Image, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Home from '../screens/Home';
-
 
 const Stack = createStackNavigator();
 
 const WelcomeScreen = ({ navigation }) => {
+  const handleGuestLogin = async () => {
+    await AsyncStorage.setItem('userId', 'null');
+    navigation.navigate('MyTabs');
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
       <Text style={styles.welcomeText}>Bienvenido a Casayá</Text>
       <View style={styles.buttonContainer}>
-      <TouchableOpacity 
+        <TouchableOpacity 
           style={[styles.button, { backgroundColor: '#58A9FF' }]}
-          onPress={() => navigation.navigate('MyTabs')} 
+          onPress={handleGuestLogin}
         >
           <Text style={styles.buttonText}>Continuar como invitado</Text>
         </TouchableOpacity>
@@ -41,13 +46,13 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginBottom: 20,
-    marginTop:-20
+    marginTop: -20,
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginTop:50
+    marginTop: 50,
   },
   buttonContainer: {
     width: '80%',
