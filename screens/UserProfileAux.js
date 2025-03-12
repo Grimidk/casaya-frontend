@@ -3,18 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-
-const properties = [
-  require('../assets/casa1.jpg'),
-  require('../assets/casa2.jpg'),
-  require('../assets/casa3.jpg'),
-  require('../assets/casa4.jpg'),
-  require('../assets/casa5.jpg'),
-  require('../assets/casa6.jpg'),
-  require('../assets/casa7.jpg'),
-  require('../assets/casa8.jpg'),
-  require('../assets/casa9.jpg'),
-];
+import PropertyCard from '../components/PropertyCard';
 
 const UserProfileAux = ({ route }) => {
   const { userId } = route.params; 
@@ -24,6 +13,7 @@ const UserProfileAux = ({ route }) => {
   const [userPhone, setUserPhone] = useState('');
   const [userLocation, setUserLocation] = useState('');
   const [propertyData, setPropertyData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -36,6 +26,7 @@ const UserProfileAux = ({ route }) => {
       }
       const properties = await fetchPropertyData(userId);
       setPropertyData(properties);
+      setLoading(false);
     };
 
     loadUserData();
@@ -48,7 +39,7 @@ const UserProfileAux = ({ route }) => {
   };
 
   const fetchPropertyData = async (userId) => {
-    const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties`);
+    const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${userId}`);
     return response.data;
   };
 
@@ -88,17 +79,27 @@ const UserProfileAux = ({ route }) => {
         </View>
 
         <View style={styles.galleryWrapper}>
-          <FlatList
-            data={properties}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal
-            renderItem={({ item }) => (
-              <View style={styles.propertyContainer}>
-                <Image source={item} style={styles.propertyImage} />
-              </View>
-            )}
-            contentContainerStyle={styles.galleryContainer}
-          />
+          {loading ? (
+            <Text>Cargando propiedades...</Text>
+          ) : (
+            <>
+              <ScrollView>
+                <View style={styles.container}>
+                  {propertyData.map((property) => (
+                    <PropertyCard
+                      key={property.id}
+                      image={{ uri: property.images[0] }}
+                      title={property.name}
+                      price={property.price}
+                      reviews={property.reviews}
+                      status={property.status}
+                      onPress={() => { navigation.navigate('Detalles', { property }); }}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -2,61 +2,57 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PropertyCard from '../components/PropertyCard';
 
-const properties = [
-  require('../assets/casa1.jpg'),
-  require('../assets/casa2.jpg'),
-  require('../assets/casa3.jpg'),
-  require('../assets/casa4.jpg'),
-  require('../assets/casa5.jpg'),
-  require('../assets/casa6.jpg'),
-  require('../assets/casa7.jpg'),
-  require('../assets/casa8.jpg'),
-  require('../assets/casa9.jpg'),
-];
-
-const UserProfile = ({ route }) => {
+const UserProfile = () => {
   const navigation = useNavigation();
   const [username, setUsername] = useState('');
-  const [viewedProperties, setViewedProperties] = useState(0);
+  const [storedUserId, setStoredUserId] = useState('');
+  const [propertyData, setPropertyData] = useState([]);
   const [userEmail, setUserEmail] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userLocation, setUserLocation] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadUserData = async () => {
-      const userId = await AsyncStorage.getItem('userId');
-      console.log("User ID:", userId);
-      if (!userId || userId === 'null') {
+      const auxUserId = await AsyncStorage.getItem('userId');
+      setStoredUserId(auxUserId);
+      console.log("User ID:", storedUserId);
+      if (!storedUserId || storedUserId === 'null') {
         setIsLoggedIn(false);
         setIsGuest(true);
         return;
       }
       setIsLoggedIn(true);
       setIsGuest(false);
-      const userData = await fetchUserDataById(userId);
+      const userData = await fetchUserDataById(storedUserId);
       if (userData) {
         setUsername(userData.name);
         setUserEmail(userData.email);
         setUserPhone(userData.phone);
         setUserLocation(userData.location || 'Ubicación no disponible');
       }
+      const properties = await fetchPropertyData(storedUserId);
+      setPropertyData(properties);
+      setLoading(false);
     };
 
     loadUserData();
-  }, []);
+  }, [storedUserId]);
 
-  const fetchUserDataById = async (userId) => {
-    const response = await fetch(`https://casaya-back-backup-production.up.railway.app/users/${userId}`);
+  const fetchUserDataById = async (storedUserId) => {
+    const response = await fetch(`https://casaya-back-backup-production.up.railway.app/users/${storedUserId}`);
     const data = await response.json();
     return data;
   };
 
-  const propertyData = async (userId) => {
-    const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${userId}`);
+  const fetchPropertyData = async (storedUserId) => {
+    const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${storedUserId}`);
     const data = await response.json();
     return data;
   };
@@ -126,26 +122,30 @@ const UserProfile = ({ route }) => {
               <Text style={styles.statLabel}>Vendidas</Text>
             </View>
           </View>
-
-          <Button
-            title="Editar Propiedad"
-            onPress={() => navigation.navigate('Edit', { propertyData: propertyData })}
-            color="#A95534"
-          />
         </View>
 
         <View style={styles.galleryWrapper}>
-          <FlatList
-            data={properties}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal
-            renderItem={({ item }) => (
-              <View style={styles.propertyContainer}>
-                <Image source={item} style={styles.propertyImage} />
-              </View>
-            )}
-            contentContainerStyle={styles.galleryContainer}
-          />
+          {loading ? (
+            <Text>Cargando propiedades...</Text>
+          ) : (
+            <>
+              <ScrollView>
+                <View style={styles.container}>
+                  {propertyData.map((property) => (
+                    <PropertyCard
+                      key={property.id}
+                      image={{ uri: property.images[0] }}
+                      title={property.name}
+                      price={property.price}
+                      reviews={property.reviews}
+                      status={property.status}
+                      onPress={() => { navigation.navigate('Detalles', { property }); }}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+            </>
+          )}
         </View>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButton}>Cerrar Sesión</Text>

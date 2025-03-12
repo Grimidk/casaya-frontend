@@ -14,7 +14,7 @@ export default function Detalles({ route }) {
   };
 
   const goToSellerProfile = () => {
-    navigation.navigate('UserProfileAux', { userId: 10 });
+    navigation.navigate('UserProfileAux', { userId: 8 });
   };
 
   return (
