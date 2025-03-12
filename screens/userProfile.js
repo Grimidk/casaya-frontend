@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, FlatList, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,6 +38,7 @@ const UserProfile = () => {
         setUserLocation(userData.location || 'Ubicación no disponible');
       }
       const properties = await fetchPropertyData(storedUserId);
+      console.log("Properties:", properties.length);
       setPropertyData(properties);
       setLoading(false);
     };
@@ -53,8 +54,7 @@ const UserProfile = () => {
 
   const fetchPropertyData = async (storedUserId) => {
     const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${storedUserId}`);
-    const data = await response.json();
-    return data;
+    return response.data;
   };
 
   const handleLogout = async () => {
@@ -118,7 +118,7 @@ const UserProfile = () => {
               <Text style={styles.statLabel}>Propiedades</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={styles.statNumber}>{propertyData.length - 1}</Text>
+              <Text style={styles.statNumber}>{propertyData.length == 0 ? 0 : propertyData.length - 1}</Text>
               <Text style={styles.statLabel}>Vendidas</Text>
             </View>
           </View>
@@ -128,7 +128,7 @@ const UserProfile = () => {
           {loading ? (
             <Text>Cargando propiedades...</Text>
           ) : (
-            <>
+            propertyData.length > 0 ? (
               <ScrollView>
                 <View style={styles.container}>
                   {propertyData.map((property) => (
@@ -144,7 +144,9 @@ const UserProfile = () => {
                   ))}
                 </View>
               </ScrollView>
-            </>
+            ) : (
+              <Text>El usuario no tiene propiedades publicadas</Text>
+            )
           )}
         </View>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
