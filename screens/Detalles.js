@@ -2,104 +2,104 @@ import React, {Component} from 'react'
 import { Text, StyleSheet, View ,StatusBar,SafeAreaView,Image,ImageBackground,ScrollView, TouchableOpacity, Linking} from 'react-native'
 import {Icon} from '@rneui/themed';
 
-;
-
 
 export default function Detalles({route}){
-    const { property } = route.params; //Se obtiene la propiedad seleccionada
+    const{property}=route.params; //Se obtiene la propiedad seleccionada
     const openWhatsApp = () => {
       const phoneNumber = property.number;
       const url = 'https://wa.me/'+phoneNumber;
       Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
-
+  
     return (
       <SafeAreaView style= {{flex:1, backgroundColor: 'white'}}>
         <StatusBar translucent backgroundColor = "rgba(0,0,0,0)"/>
         <View style={{height:400}}>
-          <ImageBackground source={{ uri: property.images[0] }} resizeMode='cover' style={{height:400}}></ImageBackground>
+          <ImageBackground source={property.image2} resizeMode='cover' style={{height:400}}></ImageBackground>
         </View>
         <ScrollView> 
           {/*Seccion de titulo*/}
           <View style={styles.containerTitle}>
-            <Text style={styles.textTitle}>{property.name}</Text>
-            <Text style={styles.textTitle}>{property.price + "$"}</Text>
+            <Text style={styles.textTitle}>{property.title}</Text>
+            <Text style={styles.textTitle}>{property.price}</Text>
+          </View>
+        
+        
+        
+        
+        {/*Seccion de subtitulo */}
+        <View style={styles.containerSubtitle}>
+          <View style={styles.location}>
+            <Icon name='bookmark-outline' type='ionicon' size={20} color={'gray'}/>
+            <Text style={{color:'slategray',fontSize:15}}>{property.location}</Text>
+          </View> 
+          
+          <View style={styles.location}>
+            <Icon name='star' type='font-awesome' size={20} color="#A95534"/>
+            <Text style={{color:'slategray',fontSize:15}}>{property.reviews} Reviews</Text>
+          </View> 
+        </View>
+
+        {/*Seccion de iconos */}
+        <View style={styles.contenedorIcons}>
+          <View>
+            <Icon name='bed' type='font-awesome' size={20} color={'gray'}/>
+            <Text style={{color:'slategray', fontSize:15}}> {property.rooms} </Text>
           </View>
 
-
-          {/*Seccion de subtitulo */}
-          <View style={styles.containerSubtitle}>
-            <View style={styles.location}>
-              <Icon name='bookmark-outline' type='ionicon' size={20} color={'gray'}/>
-              <Text style={{color:'slategray',fontSize:15}}>{property.location}</Text>
-            </View> 
-            
-            <View style={styles.location}>
-              <Icon name='star' type='font-awesome' size={20} color="#A95534"/>
-              <Text style={{color:'slategray',fontSize:15}}>{property.reviews} Reviews</Text>
-            </View> 
+          <View>
+            <Icon name='bath' type='font-awesome' size={20} color={'gray'}/>
+            <Text style= {{color:'slategray', fontSize:15}}>{property.bathrooms} </Text>
           </View>
 
-          {/*Seccion de iconos */}
-          <View style={styles.contenedorIcons}>
-            <View>
-              <Icon name='bed' type='font-awesome' size={20} color={'gray'}/>
-              <Text style={{color:'slategray', fontSize:15}}> {property.rooms} </Text>
-            </View>
-
-            <View>
-              <Icon name='bath' type='font-awesome' size={20} color={'gray'}/>
-              <Text style= {{color:'slategray', fontSize:15}}>{property.bathrooms} </Text>
-            </View>
-
-
-            <View>
-              <Icon name='car' type='font-awesome' size={20} color={'gray'}/>
-              <Text style ={{color:'slategray', fontSize:15}}> {property.parking} </Text>
-            </View>
+          <View>
+            <Icon name='car' type='font-awesome' size={20} color={'gray'}/>
+            <Text style ={{color:'slategray', fontSize:15}}> {property.parking} </Text>
           </View>
 
-          {/*Seccion descripcion */}
-          <View style={{marginTop:40, marginBottom: 40, paddingHorizontal:20}}>
-            <Text style={styles.description}>Reseña </Text>
-            <Text style={styles.textDescription}>{property.description}</Text>
+        </View>
+
+        {/*Seccion descripcion */}
+        <View style={{marginTop:40, marginBottom: 40, paddingHorizontal:20}}>
+          <Text style={styles.description}>Reseña </Text>
+          <Text style={styles.textDescription}>{property.description}</Text>
+        </View>
+
+        {/* Seccion facilidades */}
+        <View style={styles.contenedorFacilities}>
+          <View style={styles.card}>
+            <Icon name='car' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
+            <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>Puestos</Text>
           </View>
 
-          {/* Sección facilidades */}
-          <View style={styles.facilitiesContainer}>
-            <View style={styles.facilityItem}>
-              <Icon name='car' type='font-awesome' size={20} color={"gray"} />
-              <Text style={styles.facilityText}>Puestos</Text>
-            </View>
-
-
-            <View style={styles.facilityItem}>
-              <Icon name='camera' type='font-awesome' size={20} color={"gray"} />
-              <Text style={styles.facilityText}>CCTV</Text>
-            </View>
-
-            <View style={styles.facilityItem}>
-              <Icon name='user-secret' type='font-awesome' size={20} color={"gray"} />
-              <Text style={styles.facilityText}>Seguridad</Text>
-            </View>
-
-            <View style={styles.facilityItem}>
-              <Icon name='minus' type='font-awesome' size={20} color={"gray"} />
-              <Text style={styles.facilityText}>AC</Text>
-            </View>
+          <View style={styles.card}>
+            <Icon name='camera' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
+            <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>CCTV</Text>
           </View>
 
-          {/* Sección de contacto por WhatsApp */}
-          <View style={{ alignItems: 'center', marginVertical: 20 }}>
-            <TouchableOpacity style={styles.whatsappButton} onPress={openWhatsApp}>
-              <Icon name='whatsapp' type='font-awesome' size={20} color='white' />
-              <Text style={{ color: 'white', marginLeft: 10 }}>Contactar por WhatsApp</Text>
-            </TouchableOpacity>
+          <View style={styles.card}>
+            <Icon name='user-secret' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
+            <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>Seguridad</Text>
           </View>
+
+          <View style={styles.card}>
+            <Icon name='minus' type='font-awesome' size={20} color={"gray"} style={{marginTop:10}}/>
+            <Text style={{color:'slategray', fontSize:15, textAlign:'center'}}>AC</Text>
+          </View>
+        </View>
+
+        {/* Sección de contacto por WhatsApp */}
+        <View style={{ alignItems: 'center', marginVertical: 20 }}>
+          <TouchableOpacity style={styles.whatsappButton} onPress={openWhatsApp}>
+            <Icon name='whatsapp' type='font-awesome' size={20} color='white' />
+            <Text style={{ color: 'white', marginLeft: 10 }}>Contactar por WhatsApp</Text>
+          </TouchableOpacity>
+        </View>
 
         </ScrollView>
       </SafeAreaView>
-    );
+    )
+  
 }
 
 const styles = StyleSheet.create({
@@ -141,19 +141,17 @@ const styles = StyleSheet.create({
     color:'slategray',
     marginTop:5
   },
-  facilitiesContainer:{
-    paddingHorizontal:20,
-    marginVertical: 20
-  },
-  facilityItem:{
+  contenedorFacilities:{
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
+    justifyContent: 'space-between',
+    paddingHorizontal:20
   },
-  facilityText:{
-    marginLeft: 10,
-    color:'slategray',
-    fontSize:15,
+  card:{
+    borderColor:'slategray',
+    borderWidth:0.5,
+    width:70,
+    height: 60,
+    borderRadius:12
   },
   whatsappButton: {
     flexDirection: 'row',
