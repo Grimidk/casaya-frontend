@@ -4,17 +4,16 @@ import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 
 export default function Detalles({ route }) {
-  const { property } = route.params; // Se obtiene la propiedad seleccionada
+  const { property, userPhone, userId } = route.params; 
   const navigation = useNavigation();
 
   const openWhatsApp = () => {
-    const phoneNumber = '+584142493221';
-    const url = 'https://wa.me/' + phoneNumber;
+    const url = 'https://wa.me/' + '+58' + userPhone;
     Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
 
   const goToSellerProfile = () => {
-    navigation.navigate('UserProfileAux', { userId: 8 });
+    navigation.navigate('UserProfileAux', { userId });
   };
 
   return (

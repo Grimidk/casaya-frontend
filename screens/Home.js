@@ -16,11 +16,11 @@ export default function Home({ navigation }) {
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Cargar propiedades 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
         const response = await axios.get('http://casaya-back-backup-production.up.railway.app/properties'); 
+        console.log("Properties:", response.data);
         setFilteredProperties(response.data);
       } catch (error) {
         console.error("Error fetching properties:", error);
@@ -28,7 +28,7 @@ export default function Home({ navigation }) {
         setLoading(false);
       }
     };
-    
+  
     fetchProperties();
   }, []);
 
@@ -66,12 +66,18 @@ export default function Home({ navigation }) {
             {filteredProperties.map((property) => (
               <PropertyCard
                 key={property.id}
-                image={{ uri: property.images[0] }}  //toma la primera imagen del array
+                image={{ uri: property.images[0] }} 
                 title={property.name}
                 price={property.price}
                 reviews={property.reviews}
                 status={property.status}
-                onPress={() => { navigation.navigate('Detalles', { property }); }}
+                onPress={() => { 
+                  navigation.navigate('Detalles', { 
+                    property: property, 
+                    userPhone: property.user.phone, 
+                    userId: property.user.user_id 
+                  }); 
+                }}
               />
               ))}
             </View>
