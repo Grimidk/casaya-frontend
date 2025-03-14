@@ -1,10 +1,10 @@
 import React from 'react';
-import { Text, StyleSheet, View, StatusBar, SafeAreaView, Image, ImageBackground, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { Text, StyleSheet, View, StatusBar, SafeAreaView, ImageBackground, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 
 export default function Detalles({ route }) {
-  const { property, userPhone, userId } = route.params; 
+  const { property, userPhone, userId, latitud, longitud } = route.params; 
   const navigation = useNavigation();
 
   const openWhatsApp = () => {
