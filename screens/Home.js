@@ -169,7 +169,24 @@ const properties = [
 
 export default function Home({navigation}) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredProperties, setFilteredProperties] = useState(properties);
+  const [filteredProperties, setFilteredProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get('http://casaya-back-backup-production.up.railway.app/properties'); 
+        console.log("Properties:", response.data);
+        setFilteredProperties(response.data);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchProperties();
+  }, []);
 
   const searchProperty = (query) => {
     setSearchQuery(query);
@@ -199,24 +216,34 @@ export default function Home({navigation}) {
         />
       </View>
 
-      <Text style={styles.result}> {filteredProperties.length} Resultados Encontrados</Text>
-      {/* la lista de las imagenes */}
-      <ScrollView>
-        <View style={styles.container}>
-          {filteredProperties.map((property) => (
-            <PropertyCard
-              key={property.id}
-              image={property.image}
-              title={property.title}
-              price={property.price}
-              reviews={property.reviews}
-              status={property.status} 
-              onPress={() => {navigation.navigate('Detalles', { property });
-              }}
-            />
-          ))}
-        </View>
-      </ScrollView>
+      {loading ? (
+        <Text>Cargando propiedades...</Text>
+      ) : (
+        <>
+          <Text style={styles.result}> {filteredProperties.length} Resultados Encontrados</Text>
+          <ScrollView>
+            <View style={styles.container}>
+            {filteredProperties.map((property) => (
+              <PropertyCard
+                key={property.id}
+                image={{ uri: property.images[0] }} 
+                title={property.name}
+                price={property.price}
+                reviews={property.reviews}
+                status={property.status}
+                onPress={() => { 
+                  navigation.navigate('Detalles', { 
+                    property: property, 
+                    userPhone: property.user.phone, 
+                    userId: property.user.user_id 
+                  }); 
+                }}
+              />
+              ))}
+            </View>
+          </ScrollView>
+        </>
+      )}
     </SafeAreaView>
   );
 }

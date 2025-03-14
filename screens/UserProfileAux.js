@@ -1,59 +1,45 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Image, ScrollView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import PropertyCard from '../components/PropertyCard';
 
-const UserProfile = () => {
+const UserProfileAux = ({ route }) => {
+  const { userId } = route.params; 
   const navigation = useNavigation();
   const [username, setUsername] = useState('');
-  const [storedUserId, setStoredUserId] = useState('');
-  const [propertyData, setPropertyData] = useState([]);
   const [userEmail, setUserEmail] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [userLocation, setUserLocation] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isGuest, setIsGuest] = useState(false);
+  const [propertyData, setPropertyData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadUserData = async () => {
-      const auxUserId = await AsyncStorage.getItem('userId');
-      setStoredUserId(auxUserId);
-      console.log("User ID:", storedUserId);
-      if (!storedUserId || storedUserId === 'null') {
-        setIsLoggedIn(false);
-        setIsGuest(true);
-        return;
-      }
-      setIsLoggedIn(true);
-      setIsGuest(false);
-      const userData = await fetchUserDataById(storedUserId);
+      const userData = await fetchUserDataById(userId);
       if (userData) {
         setUsername(userData.name);
         setUserEmail(userData.email);
         setUserPhone(userData.phone);
         setUserLocation(userData.location || 'Ubicación no disponible');
       }
-      const properties = await fetchPropertyData(storedUserId);
-      console.log("Properties:", properties.length);
+      const properties = await fetchPropertyData(userId);
       setPropertyData(properties);
       setLoading(false);
     };
 
     loadUserData();
-  }, [storedUserId]);
+  }, [userId]);
 
-  const fetchUserDataById = async (storedUserId) => {
-    const response = await fetch(`https://casaya-back-backup-production.up.railway.app/users/${storedUserId}`);
+  const fetchUserDataById = async (userId) => {
+    const response = await fetch(`https://casaya-back-backup-production.up.railway.app/users/${userId}`);
     const data = await response.json();
     return data;
   };
 
-  const fetchPropertyData = async (storedUserId) => {
-    const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${storedUserId}`);
+  const fetchPropertyData = async (userId) => {
+    const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${userId}`);
     return response.data;
   };
 
@@ -61,38 +47,6 @@ const UserProfile = () => {
     await AsyncStorage.removeItem('userId');
     navigation.navigate('LoginScreen');
   };
-
-  if (!isLoggedIn && isGuest) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <StatusBar backgroundColor="#A95534" />
-        <View style={styles.centeredContainer}>
-          <Text style={styles.errorMessage}>Estás en modo invitado</Text>
-          <Button
-            title="Ir a Iniciar Sesión"
-            onPress={() => navigation.navigate('LoginScreen')}
-            color="#A95534"
-          />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  if (!isLoggedIn) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <StatusBar backgroundColor="#A95534" />
-        <View style={styles.centeredContainer}>
-          <Text style={styles.errorMessage}>Debes iniciar sesión primero</Text>
-          <Button
-            title="Ir a Iniciar Sesión"
-            onPress={() => navigation.navigate('LoginScreen')}
-            color="#A95534"
-          />
-        </View>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -149,9 +103,6 @@ const UserProfile = () => {
             )
           )}
         </View>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButton}>Cerrar Sesión</Text>
-        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -235,6 +186,10 @@ const styles = StyleSheet.create({
     color: '#A95534',
     marginBottom: 20,
   },
+  logoutButton: {
+    color: '#A95534',
+    fontWeight: 'bold',
+  },
 });
 
-export default UserProfile;
+export default UserProfileAux;

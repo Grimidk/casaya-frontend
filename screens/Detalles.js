@@ -1,30 +1,18 @@
-import React, { useState, useContext } from 'react'; // Importa useState y useContext
-import {
-  Text,
-  StyleSheet,
-  View,
-  StatusBar,
-  SafeAreaView,
-  ImageBackground,
-  ScrollView,
-  TouchableOpacity,
-  Linking,
-  Alert,
-} from 'react-native';
+import React, { useState, useContext }  from 'react';
+import { Text, StyleSheet, View, StatusBar, SafeAreaView, Image, ImageBackground, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Icon } from '@rneui/themed';
-import { UserContext } from '../context/UserContext'; // Importa UserContext
-
+import { useNavigation } from '@react-navigation/native';
+import { UserContext } from '../context/UserContext';
 export default function Detalles({ route }) {
-  const { property } = route.params; // Se obtiene la propiedad seleccionada
-  const { user } = useContext(UserContext); // Obtener el estado del usuario
+  const { property, userPhone, userId } = route.params; 
+  const navigation = useNavigation();
+  const { user } = useContext(UserContext); // Obtén el estado del usuario
   const [liked, setLiked] = useState(false); // Estado para controlar si la propiedad está marcada como "Me gusta"
 
   const openWhatsApp = () => {
-    const phoneNumber = property.number;
-    const url = 'https://wa.me/' + phoneNumber;
-    Linking.openURL(url).catch((err) => console.error('Error al abrir WhatsApp', err));
+    const url = 'https://wa.me/' + '+58' + userPhone;
+    Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
-
   const handleLike = () => {
     if (!user) {
       Alert.alert('Error', 'Debes iniciar sesión para marcar esta propiedad como favorita.');
@@ -34,23 +22,27 @@ export default function Detalles({ route }) {
     // Cambia el estado de "Me gusta"
     setLiked(!liked);
 
+    
     console.log('Propiedad marcada como favorita:', property.id);
+  };
+  const goToSellerProfile = () => {
+    navigation.navigate('UserProfileAux', { userId });
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
       <View style={{ height: 400 }}>
-        <ImageBackground source={property.image2} resizeMode="cover" style={{ height: 400 }}></ImageBackground>
+        <ImageBackground source={{ uri: property.images[0] }} resizeMode="cover" style={{ height: 400 }}></ImageBackground>
       </View>
       <ScrollView>
-        {/* Sección de título */}
+        {/* Seccion de titulo */}
         <View style={styles.containerTitle}>
-          <Text style={styles.textTitle}>{property.title}</Text>
-          <Text style={styles.textTitle}>{property.price}</Text>
+          <Text style={styles.textTitle}>{property.name}</Text>
+          <Text style={styles.textTitle}>{property.price + "$"}</Text>
         </View>
 
-        {/* Sección de subtítulo */}
+        {/* Seccion de subtitulo */}
         <View style={styles.containerSubtitle}>
           <View style={styles.location}>
             <Icon name="bookmark-outline" type="ionicon" size={20} color={'gray'} />
@@ -63,7 +55,7 @@ export default function Detalles({ route }) {
           </View>
         </View>
 
-        {/* Sección de iconos */}
+        {/* Seccion de iconos */}
         <View style={styles.contenedorIcons}>
           <View>
             <Icon name="bed" type="font-awesome" size={20} color={'gray'} />
@@ -81,35 +73,40 @@ export default function Detalles({ route }) {
           </View>
         </View>
 
-        {/* Sección descripción */}
+        {/* Seccion descripcion */}
         <View style={{ marginTop: 40, marginBottom: 40, paddingHorizontal: 20 }}>
           <Text style={styles.description}>Reseña </Text>
           <Text style={styles.textDescription}>{property.description}</Text>
         </View>
 
         {/* Sección facilidades */}
-        <View style={styles.contenedorFacilities}>
-          <View style={styles.card}>
-            <Icon name="car" type="font-awesome" size={20} color={'gray'} style={{ marginTop: 10 }} />
-            <Text style={{ color: 'slategray', fontSize: 15, textAlign: 'center' }}>Puestos</Text>
+        <View style={styles.facilitiesContainer}>
+          <View style={styles.facilityItem}>
+            <Icon name="car" type="font-awesome" size={20} color={'gray'} />
+            <Text style={styles.facilityText}>Puestos</Text>
           </View>
 
-          <View style={styles.card}>
-            <Icon name="camera" type="font-awesome" size={20} color={'gray'} style={{ marginTop: 10 }} />
-            <Text style={{ color: 'slategray', fontSize: 15, textAlign: 'center' }}>CCTV</Text>
+          <View style={styles.facilityItem}>
+            <Icon name="camera" type="font-awesome" size={20} color={'gray'} />
+            <Text style={styles.facilityText}>CCTV</Text>
           </View>
 
-          <View style={styles.card}>
-            <Icon name="user-secret" type="font-awesome" size={20} color={'gray'} style={{ marginTop: 10 }} />
-            <Text style={{ color: 'slategray', fontSize: 15, textAlign: 'center' }}>Seguridad</Text>
+          <View style={styles.facilityItem}>
+            <Icon name="user-secret" type="font-awesome" size={20} color={'gray'} />
+            <Text style={styles.facilityText}>Seguridad</Text>
           </View>
 
-          <View style={styles.card}>
-            <Icon name="minus" type="font-awesome" size={20} color={'gray'} style={{ marginTop: 10 }} />
-            <Text style={{ color: 'slategray', fontSize: 15, textAlign: 'center' }}>AC</Text>
+          <View style={styles.facilityItem}>
+            <Icon name="minus" type="font-awesome" size={20} color={'gray'} />
+            <Text style={styles.facilityText}>AC</Text>
           </View>
         </View>
 
+        <View style={{ alignItems: 'center', marginVertical: 20 }}>
+          <TouchableOpacity style={styles.moreInfoButton} onPress={goToSellerProfile}>
+            <Text style={{ color: 'white', marginLeft: 10 }}>Perfil del vendedor</Text>
+          </TouchableOpacity>
+        </View>
         {/* Botón de "Me gusta" */}
         <View style={{ alignItems: 'center', marginVertical: 20 }}>
           <TouchableOpacity style={styles.likeButton} onPress={handleLike}>
@@ -175,17 +172,19 @@ const styles = StyleSheet.create({
     color: 'slategray',
     marginTop: 5,
   },
-  contenedorFacilities: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  facilitiesContainer: {
     paddingHorizontal: 20,
+    marginVertical: 20,
   },
-  card: {
-    borderColor: 'slategray',
-    borderWidth: 0.5,
-    width: 70,
-    height: 60,
-    borderRadius: 12,
+  facilityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  facilityText: {
+    marginLeft: 10,
+    color: 'slategray',
+    fontSize: 15,
   },
   whatsappButton: {
     flexDirection: 'row',
@@ -195,7 +194,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
   },
-  likeButton: {
+  moreInfoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#A95534',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },likeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
