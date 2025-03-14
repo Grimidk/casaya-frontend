@@ -1,32 +1,31 @@
-import React, { useState, useContext }  from 'react';
-import { Text, StyleSheet, View, StatusBar, SafeAreaView, Image, ImageBackground, ScrollView, TouchableOpacity, Linking } from 'react-native';
-import React from 'react';
-import { Text, StyleSheet, View, StatusBar, SafeAreaView, ImageBackground, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { Text, StyleSheet, View, StatusBar, SafeAreaView, ImageBackground, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../context/UserContext';
+
 export default function Detalles({ route }) {
   const { property, userPhone, userId, latitud, longitud } = route.params; 
   const navigation = useNavigation();
-  const { user } = useContext(UserContext); // Obtén el estado del usuario
-  const [liked, setLiked] = useState(false); // Estado para controlar si la propiedad está marcada como "Me gusta"
+  const { user } = useContext(UserContext);
+  const [liked, setLiked] = useState(false);
 
   const openWhatsApp = () => {
     const url = 'https://wa.me/' + '+58' + userPhone;
     Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
+
   const handleLike = () => {
     if (!user) {
       Alert.alert('Error', 'Debes iniciar sesión para marcar esta propiedad como favorita.');
       return;
     }
 
-    // Cambia el estado de "Me gusta"
     setLiked(!liked);
 
-    
     console.log('Propiedad marcada como favorita:', property.id);
   };
+
   const goToSellerProfile = () => {
     navigation.navigate('UserProfileAux', { userId });
   };
@@ -113,10 +112,10 @@ export default function Detalles({ route }) {
         <View style={{ alignItems: 'center', marginVertical: 20 }}>
           <TouchableOpacity style={styles.likeButton} onPress={handleLike}>
             <Icon
-              name={liked ? 'heart' : 'heart-o'} // Cambia el ícono si está marcado como favorito
+              name={liked ? 'heart' : 'heart-o'}
               type="font-awesome"
               size={20}
-              color={liked ? '#FF3B30' : 'gray'} // Cambia el color si está marcado como favorito
+              color={liked ? '#FF3B30' : 'gray'}
             />
             <Text style={{ color: liked ? '#FF3B30' : 'gray', marginLeft: 10 }}>
               {liked ? 'Quitar de favoritos' : 'Marcar como favorito'}
@@ -203,7 +202,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
-  },likeButton: {
+  },
+  likeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
