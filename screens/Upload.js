@@ -1,11 +1,14 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext } from "react";
 import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
+import axios from "axios"; 
+import { UserContext } from "../context/UserContext"; 
 
 const Dropdown = ({ label, items, onSelect }) => {
   const [expanded, setExpanded] = useState(false);
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded]);
+  
 
   return (
     <View>
@@ -16,7 +19,7 @@ const Dropdown = ({ label, items, onSelect }) => {
       {expanded && (
         <View style={styles.options}>
           <FlatList
-            scrollEnabled={false} // Deshabilitar el desplazamiento del FlatList
+            scrollEnabled={false}
             keyExtractor={(item) => item.value}
             data={items}
             renderItem={({ item }) => (
@@ -64,9 +67,33 @@ const AddPropertyScreen = () => {
     setProperty({ ...property, [field]: value });
   };
 
-  const handleSave = () => {
-    Alert.alert("Guardando con éxito");
-    setProperty(initialPropertyState); // Restablecer los inputs
+  const handleSave = async () => {
+    // Validar que todos los campos estén completos
+    if (!property.name || !property.price || !property.status || !property.description || !property.municipality || !property.bathrooms || !property.bedrooms || !property.parkingSpots || !property.floors) {
+      Alert.alert('Error', 'Por favor, completa todos los campos.');
+      return;
+    }
+
+    try {
+      // Hacer una petición POST al backend para guardar la propiedad
+      console.log(property);
+      const response = await axios.post(
+        'https://casaya-back-backup-production.up.railway.app/properties/8', // URL del endpoint para guardar propiedades
+        property // Datos de la propiedad
+      );
+
+
+      // Si la respuesta es exitosa (código 201 o 200)
+      if (response.status === 201 || response.status === 200) {
+        Alert.alert('Éxito', 'Propiedad guardada con éxito');
+        setProperty(initialPropertyState); // Restablecer los inputs
+      } else {
+        Alert.alert('Error', 'No se pudo guardar la propiedad');
+      }
+    } catch (error) {
+      console.error('Error al guardar la propiedad:', error.response?.data || error.message);
+      Alert.alert('Error', 'No se pudo guardar la propiedad. Inténtalo de nuevo más tarde.');
+    }
   };
 
   return (
@@ -106,7 +133,7 @@ const AddPropertyScreen = () => {
       <TextInput style={styles.input} placeholder="Puestos de estacionamiento" keyboardType="numeric" value={property.parkingSpots} onChangeText={(text) => handleChange("parkingSpots", text)} />
       <TextInput style={styles.input} placeholder="Número de pisos" keyboardType="numeric" value={property.floors} onChangeText={(text) => handleChange("floors", text)} />
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}> 
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Guardar Propiedad</Text>
       </TouchableOpacity>
     </ScrollView>
