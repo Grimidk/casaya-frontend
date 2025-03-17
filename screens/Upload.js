@@ -1,19 +1,28 @@
-import React, { useState, useCallback, useContext } from "react";
+import React, { useState, useCallback, useContext, useEffect } from "react";
 import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios"; 
 import { UserContext } from "../context/UserContext"; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const Dropdown = ({ label, items, onSelect }) => {
   const [expanded, setExpanded] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(""); // Estado para el valor seleccionado
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded]);
   
+
+  const handleSelect = (value) => {
+    setSelectedValue(value); // Actualizar el valor seleccionado
+    onSelect(value); // Llamar la función onSelect pasada desde el componente padre
+    setExpanded(false); // Cerrar el dropdown
+  };
 
   return (
     <View>
       <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={toggleExpanded}>
-        <Text style={styles.text}>{label}</Text>
+        <Text style={styles.text}>{selectedValue || label}</Text> {/* Mostrar el valor seleccionado o el label */}
         <AntDesign name={expanded ? "caretup" : "caretdown"} size={16} />
       </TouchableOpacity>
       {expanded && (
@@ -26,10 +35,7 @@ const Dropdown = ({ label, items, onSelect }) => {
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.optionItem}
-                onPress={() => {
-                  onSelect(item.value);
-                  setExpanded(false);
-                }}
+                onPress={() => handleSelect(item.value)}
               >
                 <Text>{item.label}</Text>
               </TouchableOpacity>
@@ -43,7 +49,8 @@ const Dropdown = ({ label, items, onSelect }) => {
 };
 
 const AddPropertyScreen = () => {
-  const initialPropertyState = {
+  const { user } = useContext(UserContext); // Obtener usuario desde el contexto
+  const [property, setProperty] = useState({
     name: "",
     price: "",
     status: "",
@@ -58,41 +65,94 @@ const AddPropertyScreen = () => {
     floorNmr: "",
     latitud: 0,
     longitud: 0,
-    images: ["https://firebasestorage.googleapis.com/v0/b/autenticadordev.appspot.com/o/PropertiesImages%2Fcasa1.jpg?alt=media&token=171adc53-466e-44cc-9493-50cea330f588"],
-  };
+    images: [
+      "https://firebasestorage.googleapis.com/v0/b/autenticadordev.appspot.com/o/PropertiesImages%2Fcasa1.jpg?alt=media&token=171adc53-466e-44cc-9493-50cea330f588",
+    ],
+  });
 
-  const [property, setProperty] = useState(initialPropertyState);
+  const [userId, setUserId] = useState(null); // Nuevo estado para manejar el userId
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      // Intentar recuperar el ID del usuario desde AsyncStorage
+      const storedUserId = await AsyncStorage.getItem('userId');
+      if (storedUserId) {
+        setUserId(storedUserId); // Guardamos el userId si está disponible
+      } else if (user) {
+        setUserId(user.user_id); // Si está en el contexto, lo asignamos directamente
+      }
+    };
+    fetchUserId();
+  }, [user]);
 
   const handleChange = (field, value) => {
     setProperty({ ...property, [field]: value });
   };
 
   const handleSave = async () => {
-    // Validar que todos los campos estén completos
-    if (!property.name || !property.price || !property.status || !property.description || !property.municipality || !property.bathrooms || !property.bedrooms || !property.parkingSpots || !property.floors) {
-      Alert.alert('Error', 'Por favor, completa todos los campos.');
+    if (!userId) {
+      Alert.alert("Error", "No se ha podido identificar al usuario.");
       return;
     }
 
+    // Convertir valores numéricos antes de enviarlos
+    const formattedProperty = {
+      ...property,
+      price: Number(property.price),
+      bathrooms: Number(property.bathrooms),
+      bedrooms: Number(property.bedrooms),
+      parkingSpots: Number(property.parkingSpots),
+      floors: Number(property.floors),
+      floorNmr: Number(property.floorNmr),
+      latitud: "0", //revisar
+      longitud: "0", //revisar
+      zone: "xxxxx" //revisar
+    };
+
+    // Validar que los campos requeridos no estén vacíos
+    const requiredFields = ["name", "price", "status", "description", "municipality", "bathrooms", "bedrooms", "parkingSpots", "floors"];
+    for (const field of requiredFields) {
+      if (!formattedProperty[field]) {
+        Alert.alert("Error", `El campo "${field}" es obligatorio.`);
+        return;
+      }
+    }
+
     try {
-      // Hacer una petición POST al backend para guardar la propiedad
-      console.log(property);
+      console.log("Enviando propiedad:", formattedProperty);
       const response = await axios.post(
-        'https://casaya-back-backup-production.up.railway.app/properties/8', // URL del endpoint para guardar propiedades
-        property // Datos de la propiedad
+        `https://casaya-back-backup-production.up.railway.app/properties/${userId}`, 
+        formattedProperty
       );
 
-
-      // Si la respuesta es exitosa (código 201 o 200)
       if (response.status === 201 || response.status === 200) {
-        Alert.alert('Éxito', 'Propiedad guardada con éxito');
-        setProperty(initialPropertyState); // Restablecer los inputs
+        Alert.alert("Éxito", "Propiedad guardada con éxito.");
+        setProperty({
+          name: "",
+          price: "",
+          status: "",
+          description: "",
+          city: "Caracas",
+          municipality: "",
+          bathrooms: "",
+          bedrooms: "",
+          parkingSpots: "",
+          floors: "",
+          isApartment: false,
+          floorNmr: "",
+          latitud: "", //revisar
+          longitud: "", //revisar
+          zone: "", //revisar
+          images: [
+            "https://firebasestorage.googleapis.com/v0/b/autenticadordev.appspot.com/o/PropertiesImages%2Fcasa1.jpg?alt=media&token=171adc53-466e-44cc-9493-50cea330f588",
+          ],
+        });
       } else {
-        Alert.alert('Error', 'No se pudo guardar la propiedad');
+        Alert.alert("Error", "No se pudo guardar la propiedad.");
       }
     } catch (error) {
-      console.error('Error al guardar la propiedad:', error.response?.data || error.message);
-      Alert.alert('Error', 'No se pudo guardar la propiedad. Inténtalo de nuevo más tarde.');
+      console.error("Error al guardar la propiedad:", error.response?.data || error.message);
+      Alert.alert("Error", "No se pudo guardar la propiedad. Inténtalo de nuevo más tarde.");
     }
   };
 
@@ -141,16 +201,60 @@ const AddPropertyScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "white" },
-  title: { fontSize: 22, fontWeight: "bold", textAlign: "center", marginBottom: 20, color: "#A95534", marginTop: 160 },
-  input: { borderWidth: 1, borderColor: "#ccc", borderRadius: 5, padding: 10, marginBottom: 10 },
-  disabledInput: { backgroundColor: "#f0f0f0", color: "gray" },
-  button: { flexDirection: "row", alignItems: "center", padding: 10, borderWidth: 1, borderColor: "#ccc", borderRadius: 5, marginBottom: 10, justifyContent: "space-between" },
-  options: { borderWidth: 1, borderColor: "#ccc", borderRadius: 5, backgroundColor: "white" },
-  optionItem: { padding: 10 },
-  separator: { height: 1, backgroundColor: "#ccc" },
-  saveButton: { borderWidth: 2, borderColor: "#A95534", padding: 10, borderRadius: 5, alignItems: "center", backgroundColor: "#A95534", marginTop: 10 },
-  saveButtonText: { color: "white", fontSize: 16, fontWeight: "bold" },
+  container: {
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingLeft: 8,
+  },
+  button: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+    marginBottom: 16,
+  },
+  text: {
+    fontSize: 16,
+  },
+  options: {
+    marginTop: 8,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  optionItem: {
+    padding: 10,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#eee",
+  },
+  disabledInput: {
+    backgroundColor: "#f9f9f9",
+  },
+  saveButton: {
+    backgroundColor: "#4CAF50",
+    padding: 12,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 18,
+  },
 });
 
 export default AddPropertyScreen;

@@ -1,20 +1,34 @@
-import React from 'react';
-import { Text, StyleSheet, View, StatusBar, SafeAreaView, Image, ImageBackground, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { Text, StyleSheet, View, StatusBar, SafeAreaView, ImageBackground, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
+import { UserContext } from '../context/UserContext';
 
+export default function Detalles({ route }) {
+  const { property, userPhone, userId, latitud, longitud } = route.params; 
+  const navigation = useNavigation();
+  const { user } = useContext(UserContext);
+  const [liked, setLiked] = useState(false);
 
+  const openWhatsApp = () => {
+    const url = 'https://wa.me/' + '+58' + userPhone;
+    Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
 
-export default function Detalles({route}){
-    const { property } = route.params; //Se obtiene la propiedad seleccionada
-    const openWhatsApp = () => {
-      const phoneNumber = '+584241818540';
-      const url = 'https://wa.me/'+phoneNumber;
-      Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
+  };
+
+  const handleLike = () => {
+    if (!user) {
+      Alert.alert('Error', 'Debes iniciar sesión para marcar esta propiedad como favorita.');
+      return;
+    }
+
+    setLiked(!liked);
+
+    console.log('Propiedad marcada como favorita:', property.id);
   };
 
   const goToSellerProfile = () => {
-    navigation.navigate('UserProfileAux', { userId: 10 });
+    navigation.navigate('UserProfileAux', { userId });
   };
 
   return (
@@ -47,7 +61,7 @@ export default function Detalles({route}){
         <View style={styles.contenedorIcons}>
           <View>
             <Icon name="bed" type="font-awesome" size={20} color={'gray'} />
-            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.rooms} </Text>
+            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.bedrooms} </Text>
           </View>
 
           <View>
@@ -57,7 +71,7 @@ export default function Detalles({route}){
 
           <View>
             <Icon name="car" type="font-awesome" size={20} color={'gray'} />
-            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.parking} </Text>
+            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.parkingSpots} </Text>
           </View>
         </View>
 
@@ -67,32 +81,23 @@ export default function Detalles({route}){
           <Text style={styles.textDescription}>{property.description}</Text>
         </View>
 
-        {/* Sección facilidades */}
-        <View style={styles.facilitiesContainer}>
-          <View style={styles.facilityItem}>
-            <Icon name="car" type="font-awesome" size={20} color={'gray'} />
-            <Text style={styles.facilityText}>Puestos</Text>
-          </View>
-
-          <View style={styles.facilityItem}>
-            <Icon name="camera" type="font-awesome" size={20} color={'gray'} />
-            <Text style={styles.facilityText}>CCTV</Text>
-          </View>
-
-          <View style={styles.facilityItem}>
-            <Icon name="user-secret" type="font-awesome" size={20} color={'gray'} />
-            <Text style={styles.facilityText}>Seguridad</Text>
-          </View>
-
-          <View style={styles.facilityItem}>
-            <Icon name="minus" type="font-awesome" size={20} color={'gray'} />
-            <Text style={styles.facilityText}>AC</Text>
-          </View>
-        </View>
-
         <View style={{ alignItems: 'center', marginVertical: 20 }}>
           <TouchableOpacity style={styles.moreInfoButton} onPress={goToSellerProfile}>
             <Text style={{ color: 'white', marginLeft: 10 }}>Perfil del vendedor</Text>
+          </TouchableOpacity>
+        </View>
+        {/* Botón de "Me gusta" */}
+        <View style={{ alignItems: 'center', marginVertical: 20 }}>
+          <TouchableOpacity style={styles.likeButton} onPress={handleLike}>
+            <Icon
+              name={liked ? 'heart' : 'heart-o'}
+              type="font-awesome"
+              size={20}
+              color={liked ? '#FF3B30' : 'gray'}
+            />
+            <Text style={{ color: liked ? '#FF3B30' : 'gray', marginLeft: 10 }}>
+              {liked ? 'Quitar de favoritos' : 'Marcar como favorito'}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -172,6 +177,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#A95534',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  likeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
