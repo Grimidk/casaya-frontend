@@ -18,6 +18,7 @@ export default function Detalles({ route }) {
   const openWhatsApp = () => {
     const url = 'https://wa.me/' + '+58' + userPhone;
     Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
+
   };
   const checkIfPropertyIsLiked = async () => {
     if (!user) {
@@ -105,7 +106,7 @@ export default function Detalles({ route }) {
         <View style={styles.contenedorIcons}>
           <View>
             <Icon name="bed" type="font-awesome" size={20} color={'gray'} />
-            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.rooms} </Text>
+            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.bedrooms} </Text>
           </View>
 
           <View>
@@ -115,7 +116,7 @@ export default function Detalles({ route }) {
 
           <View>
             <Icon name="car" type="font-awesome" size={20} color={'gray'} />
-            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.parking} </Text>
+            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.parkingSpots} </Text>
           </View>
         </View>
 
@@ -123,29 +124,6 @@ export default function Detalles({ route }) {
         <View style={{ marginTop: 40, marginBottom: 40, paddingHorizontal: 20 }}>
           <Text style={styles.description}>Reseña </Text>
           <Text style={styles.textDescription}>{property.description}</Text>
-        </View>
-
-        {/* Sección facilidades */}
-        <View style={styles.facilitiesContainer}>
-          <View style={styles.facilityItem}>
-            <Icon name="car" type="font-awesome" size={20} color={'gray'} />
-            <Text style={styles.facilityText}>Puestos</Text>
-          </View>
-
-          <View style={styles.facilityItem}>
-            <Icon name="camera" type="font-awesome" size={20} color={'gray'} />
-            <Text style={styles.facilityText}>CCTV</Text>
-          </View>
-
-          <View style={styles.facilityItem}>
-            <Icon name="user-secret" type="font-awesome" size={20} color={'gray'} />
-            <Text style={styles.facilityText}>Seguridad</Text>
-          </View>
-
-          <View style={styles.facilityItem}>
-            <Icon name="minus" type="font-awesome" size={20} color={'gray'} />
-            <Text style={styles.facilityText}>AC</Text>
-          </View>
         </View>
 
         <View style={{ alignItems: 'center', marginVertical: 20 }}>
