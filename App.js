@@ -7,7 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons'; // Usando Ionicons de @expo/vector-icons
 import Home from './screens/Home';
 import Detalles from './screens/Detalles';
-import UserProfile from './screens/UserProfile'; 
+import UserProfile from './screens/userProfile'; 
 import welcome from './screens/welcome';
 import splashScreen from './screens/splashScreen';
 import Favorites from './screens/Favorites';
@@ -44,6 +44,7 @@ function HomeStack() {
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       <Stack.Screen name="Edit" component={Edit} /> 
+  
       <Stack.Screen 
         name="UserProfileAux" 
         component={UserProfileAux} 
@@ -76,10 +77,30 @@ function MyTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeStack} />
-      <Tab.Screen name="Favorites" component={Favorites} />
+      <Tab.Screen name="Favorites" component={FavoritesStack} />
       <Tab.Screen name="Upload" component={Upload} />
       <Tab.Screen name="Perfil" component={UserProfile} /> 
     </Tab.Navigator>
+  );
+}
+
+function FavoritesStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: '#A95534',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
+      <Stack.Screen name="Favorites" component={Favorites} options={{ title: 'Favoritos' , headerLeft:null, gestureEnabled:false}} />
+      <Stack.Screen name="Detalles" component={Detalles} />
+    </Stack.Navigator>
   );
 }
 
@@ -108,3 +129,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

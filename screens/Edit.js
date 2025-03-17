@@ -2,6 +2,8 @@ import React, { useState, useCallback } from "react";
 import { View, Text, TextInput, Button, Alert, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
+import { getUserId } from "../screens/utils"; 
+
 
 // Componente reutilizable Dropdown
 const Dropdown = ({ label, items, onSelect, selectedValue }) => {
@@ -179,11 +181,18 @@ const EditPropertyScreen = ({ route }) => {
   );
 };
 
-const updateProperty = async () => {
+const updateProperty = async (propertyId, property) => {
   try {
+    // Obtener el userId desde AsyncStorage utilizando la función getUserId
+    const userId = await getUserId();
+    
+    // Construir dinámicamente la URL incluyendo el userId y el número de propiedad
+    const url = `https://casaya-back-backup-production.up.railway.app/properties/${userId}/${propertyId}`;
+
+    // Realiza la solicitud PATCH con Axios
     const response = await axios.patch(
-      "https://casaya-back-backup-production.up.railway.app/properties/1/9", 
-      property, // Enviamos el objeto property directamente como el cuerpo
+      url,
+      property, // El cuerpo de la solicitud contiene el objeto property
       {
         headers: {
           "Content-Type": "application/json",
@@ -191,7 +200,8 @@ const updateProperty = async () => {
       }
     );
 
-    if (response.status === 200) { // Verificamos si el código de estado es 200
+    // Verifica si la respuesta fue exitosa
+    if (response.status === 200) {
       Alert.alert("Éxito", "La propiedad se actualizó correctamente.");
       console.log("Respuesta del backend:", response.data);
     } else {
@@ -203,7 +213,6 @@ const updateProperty = async () => {
     console.error("Error al realizar la solicitud:", error);
   }
 };
-
 
 const styles = StyleSheet.create({
   container: { 
