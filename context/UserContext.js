@@ -12,7 +12,7 @@ import axios from 'axios';
    // Función para iniciar sesión
    const login = async (email, password) => {
      try {
-      console.log('Enviando credenciales:', { email, password });
+      //console.log('Enviando credenciales:', { email, password });
        const response = await axios.post('https://casaya-back-backup-production.up.railway.app/users/login', {
          email,
          password,

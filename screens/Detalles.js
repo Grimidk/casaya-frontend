@@ -1,29 +1,74 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect  } from 'react';
 import { Text, StyleSheet, View, StatusBar, SafeAreaView, ImageBackground, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../context/UserContext';
-
+import axios from 'axios';
 export default function Detalles({ route }) {
   const { property, userPhone, userId, latitud, longitud } = route.params; 
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
   const [liked, setLiked] = useState(false);
+ 
+  // Llama a la función cuando la pantalla se carga o cuando el usuario cambia
+  useEffect(() => {
+    checkIfPropertyIsLiked();
+  }, [user, property.property_id]);
 
   const openWhatsApp = () => {
     const url = 'https://wa.me/' + '+58' + userPhone;
     Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
   };
+  const checkIfPropertyIsLiked = async () => {
+    if (!user) {
+      return; // Si no hay usuario, no hay nada que verificar
+    }
+  
+    try {
+      const response = await axios.get(
+        `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}`
+      );
+      const favorites = response.data.bookmarks; // Lista de propiedades favoritas
+      
+      const isPropertyLiked = favorites.includes(property.property_id); 
+      
+      setLiked(isPropertyLiked); // Actualiza el estado local
+    } catch (error) {
+      console.error('Error al verificar favoritos:', error);
+    }
+  };
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (!user) {
       Alert.alert('Error', 'Debes iniciar sesión para marcar esta propiedad como favorita.');
       return;
     }
-
-    setLiked(!liked);
-
-    console.log('Propiedad marcada como favorita:', property.id);
+  
+    try {
+      let response;
+  
+      if (liked) {
+        // Si ya está marcada como favorita, enviar una solicitud DELETE para quitarla
+        response = await axios.delete(
+          `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}/bookmark/${property.property_id}`
+        );
+      } else {
+        // Si no está marcada como favorita, enviar una solicitud PATCH para agregarla
+        response = await axios.patch(
+          `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}/bookmark/${property.property_id}`
+        );
+      }
+  
+      if (response.status === 200) {
+        // Actualizar el estado local
+        console.log(user)
+        setLiked(!liked);
+        Alert.alert('Éxito', liked ? 'Propiedad quitada de favoritos.' : 'Propiedad agregada a favoritos.');
+      }
+    } catch (error) {
+      console.error('Error al actualizar favoritos:', error.response?.data || error.message);
+      Alert.alert('Error', 'No se pudo actualizar la lista de favoritos.');
+    }
   };
 
   const goToSellerProfile = () => {
@@ -46,7 +91,7 @@ export default function Detalles({ route }) {
         {/* Seccion de subtitulo */}
         <View style={styles.containerSubtitle}>
           <View style={styles.location}>
-            <Icon name="bookmark-outline" type="ionicon" size={20} color={'gray'} />
+            
             <Text style={{ color: 'slategray', fontSize: 15 }}>{property.location}</Text>
           </View>
 
@@ -112,13 +157,13 @@ export default function Detalles({ route }) {
         <View style={{ alignItems: 'center', marginVertical: 20 }}>
           <TouchableOpacity style={styles.likeButton} onPress={handleLike}>
             <Icon
-              name={liked ? 'heart' : 'heart-o'}
-              type="font-awesome"
+              name={liked ? 'bookmark' : 'bookmark-outline'}
+              type="ionicon"
               size={20}
-              color={liked ? '#FF3B30' : 'gray'}
+              color={liked ? 'gray' : 'gray'}
             />
-            <Text style={{ color: liked ? '#FF3B30' : 'gray', marginLeft: 10 }}>
-              {liked ? 'Quitar de favoritos' : 'Marcar como favorito'}
+            <Text style={{ color: liked ? 'grey' : 'gray', marginLeft: 10 }}>
+              {liked ? 'Deshacer' : 'Guardad Propiedad'}
             </Text>
           </TouchableOpacity>
         </View>
