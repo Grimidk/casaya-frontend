@@ -7,14 +7,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons'; // Usando Ionicons de @expo/vector-icons
 import Home from './screens/Home';
 import Detalles from './screens/Detalles';
-import UserProfile from './screens/userProfile'; 
+import UserProfile from './screens/UserProfile'; 
 import welcome from './screens/welcome';
 import splashScreen from './screens/splashScreen';
 import Favorites from './screens/Favorites';
 import Upload from './screens/Upload';
 import LoginScreen from './screens/LoginScreen';
 import Edit from './screens/Edit';
-import UserProfileAux from './screens/UserProfileAux';
+import UserProfileAux from './screens/userProfileAux';
 import { UserContext, UserProvider } from './context/UserContext';
 import { View } from 'react-native';
 import RegisterScreen from './screens/RegisterScreen';
