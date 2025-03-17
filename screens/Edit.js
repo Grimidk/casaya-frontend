@@ -2,6 +2,8 @@ import React, { useState, useCallback } from "react";
 import { View, Text, TextInput, Button, Alert, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
+import { getUserId } from "../screens/utils"; 
+
 
 // Componente reutilizable Dropdown
 const Dropdown = ({ label, items, onSelect, selectedValue }) => {
@@ -179,30 +181,38 @@ const EditPropertyScreen = ({ route }) => {
   );
 };
 
-const updateProperty = async () => {
+const updateProperty = async (propertyId, property) => {
   try {
-    const response = await fetch("https://casaya-back-backup-production.up.railway.app/properties/2/1", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(property), // Enviamos el objeto property como JSON
-    });
+    // Obtener el userId desde AsyncStorage utilizando la función getUserId
+    const userId = await getUserId();
+    
+    // Construir dinámicamente la URL incluyendo el userId y el número de propiedad
+    const url = `https://casaya-back-backup-production.up.railway.app/properties/${userId}/${propertyId}`;
 
-    if (response.ok) {
-      const data = await response.json();
+    // Realiza la solicitud PATCH con Axios
+    const response = await axios.patch(
+      url,
+      property, // El cuerpo de la solicitud contiene el objeto property
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Verifica si la respuesta fue exitosa
+    if (response.status === 200) {
       Alert.alert("Éxito", "La propiedad se actualizó correctamente.");
-      console.log("Respuesta del backend:", data);
+      console.log("Respuesta del backend:", response.data);
     } else {
       Alert.alert("Error", "No se pudo actualizar la propiedad.");
-      console.error("Error del backend:", await response.text());
+      console.error("Error del backend:", response.data);
     }
   } catch (error) {
     Alert.alert("Error", "Ocurrió un problema al conectar con el servidor.");
     console.error("Error al realizar la solicitud:", error);
   }
 };
-
 
 const styles = StyleSheet.create({
   container: { 

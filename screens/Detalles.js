@@ -13,6 +13,7 @@ export default function Detalles({ route }) {
   const openWhatsApp = () => {
     const url = 'https://wa.me/' + '+58' + userPhone;
     Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
+
   };
 
   const handleLike = () => {

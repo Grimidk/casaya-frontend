@@ -6,10 +6,12 @@ import axios from "axios";
 import { UserContext } from "../context/UserContext"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 const Dropdown = ({ label, items, onSelect }) => {
   const [expanded, setExpanded] = useState(false);
   const [selectedValue, setSelectedValue] = useState(""); // Estado para el valor seleccionado
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded]);
+  
 
   const handleSelect = (value) => {
     setSelectedValue(value); // Actualizar el valor seleccionado
