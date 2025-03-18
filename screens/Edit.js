@@ -1,14 +1,19 @@
-import React, { useState, useCallback } from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import React, { useState, useCallback, useContext, useEffect } from "react";
+import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList } from "react-native";
+import axios from "axios";
+import { UserContext } from "../context/UserContext";
 import { AntDesign } from "@expo/vector-icons";
-import { getUserId } from "../screens/utils"; 
 
-
-// Componente reutilizable Dropdown
-const Dropdown = ({ label, items, onSelect, selectedValue }) => {
+const Dropdown = ({ label, items, onSelect, initialValue }) => {
   const [expanded, setExpanded] = useState(false);
+  const [selectedValue, setSelectedValue] =useState(initialValue || "");
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded]);
+
+  const handleSelect = (value) => {
+    setSelectedValue(value);
+    onSelect(value);
+    setExpanded(false);
+  };
 
   return (
     <View>
@@ -19,16 +24,14 @@ const Dropdown = ({ label, items, onSelect, selectedValue }) => {
       {expanded && (
         <View style={styles.options}>
           <FlatList
+            scrollEnabled={false}
             keyExtractor={(item) => item.value}
             data={items}
             renderItem={({ item }) => (
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.optionItem}
-                onPress={() => {
-                  onSelect(item.value);
-                  setExpanded(false);
-                }}
+                onPress={() => handleSelect(item.value)}
               >
                 <Text>{item.label}</Text>
               </TouchableOpacity>
@@ -41,58 +44,67 @@ const Dropdown = ({ label, items, onSelect, selectedValue }) => {
   );
 };
 
-const EditPropertyScreen = ({ route }) => {
-    const { propertyData } = route.params; // Obtenemos propertyData de los parámetros de la ruta
+const EditPropertyScreen = ({ route, navigation }) => {
+  const { propertyData } = route.params; // Recibir el property seleccionado desde UserProfile
+  const { user } = useContext(UserContext);
+  const [property, setProperty] = useState(propertyData); // Inicializar con la propiedad pasada
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (field, value) => {
+    setProperty({ ...property, [field]: value });
+  };
+
+  const propertyId = property.property_id
   
-    if (!propertyData) {
-      return (
-        <View style={styles.container}>
-          <Text style={styles.title}>No se han recibido datos de la propiedad.</Text>
-        </View>
-      );
+  const handleUpdate = async () => {
+    if (!property || !propertyId) {
+      console.log(propertyId)
+      Alert.alert("Error", "Falta información necesaria para actualizar la propiedad.");
+      return;
     }
-  
-    const [property, setProperty] = useState(propertyData);
-  
-    const handleChange = (field, value) => {
-      setProperty({ ...property, [field]: value });
-    };
-  
-    // Seleccionar imágenes
-    const pickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-      if (!result.canceled) {
-        setProperty({ ...property, images: [...property.images, result.assets[0].uri] });
+
+
+
+    try {
+      setLoading(true);
+      const userId = user?.user_id; // Obtener el user ID desde el contexto
+      console.log(userId)
+      if (!userId) {
+        Alert.alert("Error", "El usuario no está autenticado.");
+        setLoading(false);
+        return;
       }
-    };
-  
-    const removeImage = (index) => {
-        const newImages = property.images.filter((_, i) => i !== index);
-        setProperty({ ...property, images: newImages });
-      };
-      
+
+      const response = await axios.patch(
+        `https://casaya-back-backup-production.up.railway.app/properties/${userId}/${propertyId}`,
+        property
+      );
+
+      if (response.status === 200 || response.status === 204) {
+        Alert.alert("Éxito", "Propiedad actualizada con éxito.");
+        navigation.goBack(); // Regresar a la pantalla anterior
+      } else {
+        console.log(propertyId,userId)
+        Alert.alert("Error", "No se pudo actualizar la propiedad.");
+      }
+    } catch (error) {
+      console.error("Error al actualizar la propiedad:", error.response?.data || error.message);
+      Alert.alert("Error", "No se pudo actualizar la propiedad. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!property) {
+    return <Text>Error al cargar la propiedad.</Text>;
+  }
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Editar Propiedad</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Título"
-        value={property.title}
-        onChangeText={(text) => handleChange("title", text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Precio"
-        keyboardType="numeric"
-        value={property.price}
-        onChangeText={(text) => handleChange("price", text)}
-      />
+      <TextInput style={styles.input} placeholder="Nombre" value={property.name} onChangeText={(text) => handleChange("name", text)} />
+      <TextInput style={styles.input} placeholder="Precio" keyboardType="numeric" value={String(property.price)} onChangeText={(text) => handleChange("price", text)} />
 
       <Dropdown
         label="Selecciona el estado"
@@ -101,22 +113,11 @@ const EditPropertyScreen = ({ route }) => {
           { label: "Alquiler", value: "alquiler" },
           { label: "Remate", value: "remate" },
         ]}
-        selectedValue={property.status}
         onSelect={(value) => handleChange("status", value)}
+        initialValue={property.status}
       />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Descripción"
-        multiline
-        value={property.description}
-        onChangeText={(text) => handleChange("description", text)}
-      />
-      <TextInput
-        style={[styles.input, styles.disabledInput]}
-        value="Caracas"
-        editable={false}
-      />
+      <TextInput style={styles.input} placeholder="Descripción" multiline value={property.description} onChangeText={(text) => handleChange("description", text)} />
 
       <Dropdown
         label="Selecciona el municipio"
@@ -127,178 +128,75 @@ const EditPropertyScreen = ({ route }) => {
           { label: "El Hatillo", value: "el_hatillo" },
           { label: "Sucre", value: "sucre" },
         ]}
-        selectedValue={property.municipality}
         onSelect={(value) => handleChange("municipality", value)}
+        initialValue={property.municipality}
       />
 
-      {/* Dropdown para código de área */}
-      <Dropdown
-        label={`Código de área: ${property.numberCode}`}
-        items={[
-          { label: "0424", value: "0424" },
-          { label: "0414", value: "0414" },
-          { label: "0412", value: "0412" },
-          { label: "0212", value: "0212" },
-        ]}
-        selectedValue={property.numberCode}
-        onSelect={(value) => handleChange("numberCode", value)}
-      />
+      <TextInput style={styles.input} placeholder="Baños" keyboardType="numeric" value={String(property.bathrooms)} onChangeText={(text) => handleChange("bathrooms", text)} />
+      <TextInput style={styles.input} placeholder="Habitaciones" keyboardType="numeric" value={String(property.bedrooms)} onChangeText={(text) => handleChange("bedrooms", text)} />
+      <TextInput style={styles.input} placeholder="Puestos de estacionamiento" keyboardType="numeric" value={String(property.parkingSpots)} onChangeText={(text) => handleChange("parkingSpots", text)} />
 
-      {/* Campo para el número de teléfono (solo 7 dígitos) */}
-      <TextInput
-        style={styles.input}
-        placeholder="Número de teléfono"
-        keyboardType="numeric"
-        maxLength={7}
-        value={property.number}
-        onChangeText={(text) => handleChange("number", text)}
-      />
-
-      <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
-        <Text style={styles.imageButtonText}>Seleccionar Imágenes</Text>
+      <TouchableOpacity style={styles.saveButton} onPress={handleUpdate} disabled={loading}>
+        <Text style={styles.saveButtonText}>
+          {loading ? "Actualizando..." : "Actualizar Propiedad"}
+        </Text>
       </TouchableOpacity>
-
-      <View style={styles.imagePreview}>
-        {property.images.map((img, index) => (
-          <View key={index} style={styles.imageContainer}>
-            <Image source={{ uri: img }} style={styles.image} />
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => removeImage(index)}
-            >
-              <Text style={styles.deleteButtonText}>X</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
-
-      <Button
-      title="Guardar Cambios"
-      onPress={updateProperty}
-      color="#A95534"
-      />
     </ScrollView>
   );
 };
 
-const updateProperty = async (propertyId, property) => {
-  try {
-    // Obtener el userId desde AsyncStorage utilizando la función getUserId
-    const userId = await getUserId();
-    
-    // Construir dinámicamente la URL incluyendo el userId y el número de propiedad
-    const url = `https://casaya-back-backup-production.up.railway.app/properties/${userId}/${propertyId}`;
-
-    // Realiza la solicitud PATCH con Axios
-    const response = await axios.patch(
-      url,
-      property, // El cuerpo de la solicitud contiene el objeto property
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    // Verifica si la respuesta fue exitosa
-    if (response.status === 200) {
-      Alert.alert("Éxito", "La propiedad se actualizó correctamente.");
-      console.log("Respuesta del backend:", response.data);
-    } else {
-      Alert.alert("Error", "No se pudo actualizar la propiedad.");
-      console.error("Error del backend:", response.data);
-    }
-  } catch (error) {
-    Alert.alert("Error", "Ocurrió un problema al conectar con el servidor.");
-    console.error("Error al realizar la solicitud:", error);
-  }
-};
-
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    padding: 20, 
-    backgroundColor: "white" 
+  container: {
+    padding: 16,
   },
-  title: { 
-    fontSize: 22, 
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
-     textAlign: "center", 
-     marginBottom: 40, 
-     color: "#A95534" ,
-      marginTop:40
-    },
-  input: { 
+    marginBottom: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingLeft: 8,
+  },
+  button: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+    marginBottom: 16,
+  },
+  text: {
+    fontSize: 16,
+  },
+  options: {
+    marginTop: 8,
+    backgroundColor: "#fff",
+    borderRadius: 5,
     borderWidth: 1,
     borderColor: "#ccc",
+  },
+  optionItem: {
+    padding: 10,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#eee",
+  },
+  saveButton: {
+    backgroundColor: "#4CAF50",
+    padding: 12,
     borderRadius: 5,
-    padding: 10, 
-    marginBottom: 10 
+    alignItems: "center",
   },
-  disabledInput: { 
-    backgroundColor: "#f0f0f0",
-    color: "gray"
-   },
-  imageButton: { 
-    backgroundColor: "#A95534",
-     padding: 10, borderRadius: 5, 
-     alignItems: "center",
-      marginBottom: 10 
-    },
-  imageButtonText: { 
-    color: "white", 
-    fontSize: 16
-   },
-  imagePreview: {
-    flexDirection: "row", flexWrap: "wrap" 
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 18,
   },
-    imageContainer: { 
-      position: "relative", 
-      margin: 5 
-    },
-    image: { 
-      width: 80,
-      height: 80, 
-      borderRadius: 5 
-    },
-    deleteButton: { 
-      position: "absolute", 
-      top: -5,
-      right: -5,
-      backgroundColor: "#A95534",
-      borderRadius: 10, 
-      width: 20, 
-      height: 20,
-      alignItems: "center", 
-      justifyContent: "center" 
-    },
-    deleteButtonText: { 
-      color: "white", 
-      fontSize: 12, 
-      fontWeight: "bold" 
-    },
-    button: { 
-      flexDirection: "row", 
-      alignItems: "center",
-      padding: 10, 
-      borderWidth: 1, 
-      borderColor: "#ccc", 
-      borderRadius: 5, 
-      marginBottom: 10,
-      justifyContent: "space-between"
-     },
-    options: {
-      borderWidth: 1, 
-      borderColor: "#ccc", 
-      borderRadius: 5, 
-      backgroundColor: "white"
-     },
-    optionItem: {
-      padding: 10
-     },
-    separator: { 
-      height: 1,
-      backgroundColor: "#ccc" }
 });
 
 export default EditPropertyScreen;

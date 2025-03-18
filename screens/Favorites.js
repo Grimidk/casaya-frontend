@@ -18,15 +18,22 @@ const FavoritesScreen = ({ navigation }) => {
         return;
       }
 
-      // Obtener el array de propertyId desde la API de favoritos
-      const favoritesResponse = await axios.get(`https://casaya-back-backup-production.up.railway.app/favorites/${userId}`);
-      const favoritePropertyIds = favoritesResponse.data; // Suponemos que devuelve un array de IDs
+      // Obtener los datos del usuario desde la API
+      const userResponse = await axios.get(`https://casaya-back-backup-production.up.railway.app/users/${userId}`);
+      const userBookmarks = userResponse.data.bookmarks; // Obtenemos el array de favoritos (bookmarks)
 
-      // Mapea cada propertyId para obtener los detalles de las propiedades
+      if (!userBookmarks || userBookmarks.length === 0) {
+        Alert.alert("Información", "No tienes favoritos guardados.");
+        setProperties([]);
+        setLoading(false);
+        return;
+      }
+
+      // Mapea cada propertyId en user.bookmarks para obtener los detalles de las propiedades
       const propertiesData = await Promise.all(
-        favoritePropertyIds.map(async (propertyId) => {
+        userBookmarks.map(async (propertyId) => {
           const propertyResponse = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${propertyId}`);
-          return propertyResponse.data; // Datos de la propiedad
+          return propertyResponse.data; // Devuelve los datos de la propiedad
         })
       );
 
