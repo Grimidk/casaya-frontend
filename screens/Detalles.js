@@ -4,6 +4,8 @@ import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../context/UserContext';
 import axios from 'axios';
+import MapView, { Marker } from 'react-native-maps';
+
 export default function Detalles({ route }) {
   const { property, userPhone, userId, latitud, longitud } = route.params; 
   const navigation = useNavigation();
@@ -74,6 +76,33 @@ export default function Detalles({ route }) {
 
   const goToSellerProfile = () => {
     navigation.navigate('UserProfileAux', { userId });
+  };
+
+  const propertyMap = (latitud, longitud) => {const App = () => {
+    return (
+      <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+          <MapView
+            style={styles.mapStyle}
+            initialRegion={{
+              latitude: latitud,
+              longitude: longitud
+            }}
+            customMapStyle={mapStyle}>
+            <Marker
+              draggable
+              coordinate={{
+                latitude: latitud,
+                longitude: longitud,
+              }}
+              onDragEnd={
+                (e) => alert(JSON.stringify(e.nativeEvent.coordinate))
+              }
+            />
+          </MapView>
+        </View>
+      </SafeAreaView>
+    );}; 
   };
 
   return (
