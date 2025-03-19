@@ -168,14 +168,12 @@ const UserProfile = () => {
                 {propertyData.map((property) => (
                   <View key={property.id} style={styles.propertyWrapper}>
                     <PropertyCard
+                      key={property.id}
                       image={{ uri: property.images[0] }}
                       title={property.name}
                       price={property.price}
                       reviews={property.reviews}
                       status={property.status}
-                      onPress={() =>
-                        navigation.navigate("Detalles", { property })
-                      }
                     />
                     <TouchableOpacity
                       style={styles.editButton}
