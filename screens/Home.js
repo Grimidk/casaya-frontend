@@ -20,10 +20,6 @@ export default function Home({ navigation }) {
     const fetchProperties = async () => {
       try {
         const response = await axios.get('http://casaya-back-backup-production.up.railway.app/properties/'); 
-        response.data.forEach(property => {
-          console.log("Latitud:", property.latitud);
-          console.log("Longitud:", property.longitud);
-        });
         setFilteredProperties(response.data);
       } catch (error) {
         console.error("Error fetching properties:", error);
