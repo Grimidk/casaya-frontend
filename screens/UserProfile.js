@@ -78,15 +78,8 @@ const UserProfile = () => {
   };
 
   const fetchPropertyData = async (userId) => {
-    try {
-      const response = await axios.get(
-        `https://casaya-back-backup-production.up.railway.app/properties/${userId}`
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error al obtener propiedades:", error);
-      return [];
-    }
+    const response = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${userId}`);
+    return response.data;
   };
 
   const handleLogout = async () => {
