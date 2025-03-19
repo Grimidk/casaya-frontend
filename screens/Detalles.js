@@ -105,6 +105,44 @@ export default function Detalles({ route }) {
     );}; 
   };
 
+//   function initMap() {
+//     const ubicacion = { lat: 19.432608, lng: -99.133209 }; // Ejemplo: CDMX
+//     const map = new google.maps.Map(document.getElementById("map"), {
+//         zoom: 15,
+//         center: ubicacion,
+//     });
+
+//     new google.maps.Marker({
+//         position: ubicacion,
+//         map: map,
+//         title: "Ubicación de la propiedad",
+//     });
+// }
+
+// const GoogleMap = ({ lat, lng }) => {
+//   useEffect(() => {
+//       const script = document.createElement("script");
+//       script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDs-nsLFRQc0j1awjGUaLves8-8Xwp3ag8&callback=initMap`;
+//       script.async = true;
+//       document.body.appendChild(script);
+
+//       window.initMap = () => {
+//           const map = new google.maps.Map(document.getElementById("map"), {
+//               zoom: 9,
+//               center: { lat, lng },
+//           });
+
+//           new google.maps.Marker({
+//               position: { lat, lng },
+//               map: map,
+//               title: "Ubicación de la propiedad",
+//           });
+//       };
+//       return () => document.body.removeChild(script);
+//   }, [lat, lng]);
+// };
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
@@ -154,6 +192,34 @@ export default function Detalles({ route }) {
           <Text style={styles.description}>Reseña </Text>
           <Text style={styles.textDescription}>{property.description}</Text>
         </View>
+
+        {/* Google Maps Section */}
+        <View style={{ height: 200, width: '100%' }}>
+        {property.latitude && property.longitude ? (
+          <MapView
+            style={{ flex: 1 }}
+            region={{
+              latitude: property.latitude,
+              longitude: property.longitude,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: property.latitude,
+                longitude: property.longitude,
+            }}
+            title="Ubicación de la propiedad"
+            description="Esta es la ubicación de la propiedad"
+          />
+        </MapView>
+      ) : (
+        <Text style={{ textAlign: 'center', marginTop: 20 }}>
+          No se pudo cargar la ubicación de la propiedad.
+        </Text>
+    )}
+  </View>
 
         <View style={{ alignItems: 'center', marginVertical: 20 }}>
           <TouchableOpacity style={styles.moreInfoButton} onPress={goToSellerProfile}>

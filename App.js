@@ -22,6 +22,8 @@ import RegisterScreen from './screens/RegisterScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+
+
 function HomeStack() {
   return (
     <Stack.Navigator
