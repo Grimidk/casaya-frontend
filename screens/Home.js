@@ -172,7 +172,7 @@ export default function Home({ navigation }) {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get('http://casaya-back-backup-production.up.railway.app/properties'); 
+        const response = await axios.get('http://casaya-back-backup-production.up.railway.app/properties/'); 
         response.data.forEach(property => {
           console.log("Latitud:", property.latitud);
           console.log("Longitud:", property.longitud);

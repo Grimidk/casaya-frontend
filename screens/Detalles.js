@@ -9,6 +9,7 @@ export default function Detalles({ route }) {
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
   const [liked, setLiked] = useState(false);
+  
  
   // Llama a la función cuando la pantalla se carga o cuando el usuario cambia
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function Detalles({ route }) {
       } else {
         // Si no está marcada como favorita, enviar una solicitud PATCH para agregarla
         response = await axios.patch(
-          `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}/bookmark/${property.property_id}`
+          `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}/bookmark/${property.property_id}`, 
         );
       }
   

@@ -1,27 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
-import { getUserId } from "../screens/utils"; 
+import { UserContext } from '../context/UserContext';
 
 const FavoritesScreen = ({ navigation }) => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useContext(UserContext); // Uso del contexto para obtener datos del usuario
 
   // Función para cargar las propiedades favoritas
   const fetchFavorites = async () => {
     try {
-      // Obtener el userId desde AsyncStorage
-      const userId = await getUserId();
-      if (!userId) {
-        Alert.alert("Error", "No se pudo cargar el userId.");
+      if (!user || !user.user_id) {
+        Alert.alert("Error", "No se ha podido identificar al usuario. Inicia sesión.");
         setLoading(false);
         return;
       }
 
-      // Obtener los datos del usuario desde la API
-      const userResponse = await axios.get(`https://casaya-back-backup-production.up.railway.app/users/${userId}`);
-      const userBookmarks = userResponse.data.bookmarks; // Obtenemos el array de favoritos (bookmarks)
-
+      // Obtener los favoritos del usuario desde la API
+      const userResponse = await axios.get(`https://casaya-back-backup-production.up.railway.app/users/${user.user_id}`);
+      const userBookmarks = userResponse.data.bookmarks; // Lista de favoritos
+      
       if (!userBookmarks || userBookmarks.length === 0) {
         Alert.alert("Información", "No tienes favoritos guardados.");
         setProperties([]);
@@ -29,15 +28,14 @@ const FavoritesScreen = ({ navigation }) => {
         return;
       }
 
-      // Mapea cada propertyId en user.bookmarks para obtener los detalles de las propiedades
+      // Obtener detalles de cada propiedad favorita
       const propertiesData = await Promise.all(
         userBookmarks.map(async (propertyId) => {
           const propertyResponse = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${propertyId}`);
-          return propertyResponse.data; // Devuelve los datos de la propiedad
+          return propertyResponse.data; // Datos de la propiedad
         })
       );
-
-      // Actualiza el estado con los detalles de las propiedades
+      
       setProperties(propertiesData);
       setLoading(false);
     } catch (error) {
@@ -47,7 +45,7 @@ const FavoritesScreen = ({ navigation }) => {
     }
   };
 
-  // Llama a fetchFavorites al montar el componente
+  // Cargar favoritos al montar el componente
   useEffect(() => {
     fetchFavorites();
   }, []);
