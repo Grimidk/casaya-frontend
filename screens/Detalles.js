@@ -142,7 +142,7 @@ export default function Detalles({ route }) {
               color={liked ? 'gray' : 'gray'}
             />
             <Text style={{ color: liked ? 'grey' : 'gray', marginLeft: 10 }}>
-              {liked ? 'Eliminar de gurdados' : 'Guardad Propiedad'}
+              {liked ? 'Eliminar de guardados' : 'Guardad Propiedad'}
             </Text>
           </TouchableOpacity>
         </View>
