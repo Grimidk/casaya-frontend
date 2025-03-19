@@ -11,8 +11,6 @@ import {
 import axios from 'axios';
 import PropertyCard from '../components/PropertyCard';
 
-
-
 export default function Home({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProperties, setFilteredProperties] = useState([]);
@@ -82,7 +80,8 @@ export default function Home({ navigation }) {
                     userPhone: property.user.phone, 
                     userId: property.user.user_id,
                     latitud: property.latitud,
-                    longitud: property.longitud
+                    longitud: property.longitud,
+                    municipio: property.municipality
                   }); 
                 }}
               />

@@ -22,6 +22,8 @@ import RegisterScreen from './screens/RegisterScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+
+
 function HomeStack() {
   return (
     <Stack.Navigator
@@ -44,7 +46,11 @@ function HomeStack() {
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       <Stack.Screen name="Edit" component={Edit} /> 
-  
+      <Stack.Screen 
+        name="UserProfile" 
+        component={UserProfile} 
+        options={{ title: 'Perfil de Usuario' }}
+      />
       <Stack.Screen 
         name="UserProfileAux" 
         component={UserProfileAux} 
