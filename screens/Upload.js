@@ -70,6 +70,8 @@ const AddPropertyScreen = () => {
 
   const [userId, setUserId] = useState(null);
   const [selectedImages, setSelectedImages] = useState([]); // Local state for image preview
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
     const fetchUserId = async () => {
