@@ -8,19 +8,21 @@ import { Ionicons } from '@expo/vector-icons'; // Usando Ionicons de @expo/vecto
 import Home from './screens/Home';
 import Detalles from './screens/Detalles';
 import UserProfile from './screens/UserProfile'; 
+import UserProfileAux from './screens/UserProfileAux';
 import welcome from './screens/welcome';
 import splashScreen from './screens/splashScreen';
 import Favorites from './screens/Favorites';
 import Upload from './screens/Upload';
 import LoginScreen from './screens/LoginScreen';
 import Edit from './screens/Edit';
-import UserProfileAux from './screens/UserProfileAux';
 import { UserContext, UserProvider } from './context/UserContext';
 import { View } from 'react-native';
 import RegisterScreen from './screens/RegisterScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+
 
 function HomeStack() {
   return (
@@ -44,7 +46,11 @@ function HomeStack() {
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       <Stack.Screen name="Edit" component={Edit} /> 
-  
+      <Stack.Screen 
+        name="UserProfile" 
+        component={UserProfile} 
+        options={{ title: 'Perfil de Usuario' }}
+      />
       <Stack.Screen 
         name="UserProfileAux" 
         component={UserProfileAux} 

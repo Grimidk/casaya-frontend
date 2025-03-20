@@ -95,7 +95,28 @@ const AddPropertyScreen = () => {
       return;
     }
 
-    // Convertir valores numéricos antes de enviarlos
+    let latitud = "0";
+    let longitud = "0";
+
+    if (property.municipality === "libertador") {
+      latitud = "10.48801";
+      longitud = "-66.87919";
+    } else if (property.municipality === "baruta") {
+      latitud = "10.42971";
+      longitud = "-66.87088";
+    } else if (property.municipality === "chacao") {
+      latitud = "10.49606";
+      longitud = "-66.85312";
+    } else if (property.municipality === "el_hatillo") {
+      latitud = "10.42472";
+      longitud = "-66.83096";
+    } else if (property.municipality === "sucre") {
+      latitud = "10.49596";
+      longitud = "-66.81827";
+    } else {
+    }
+
+    // Convert values to numbers before sending
     const formattedProperty = {
       ...property,
       price: Number(property.price),
@@ -104,12 +125,11 @@ const AddPropertyScreen = () => {
       parkingSpots: Number(property.parkingSpots),
       floors: Number(property.floors),
       floorNmr: Number(property.floorNmr),
-      latitud: "0", //revisar
-      longitud: "0", //revisar
-      zone: "xxxxx" //revisar
+      latitud,
+      longitud,
+      zone: "xxxxx",
     };
 
-    // Validar que los campos requeridos no estén vacíos
     const requiredFields = ["name", "price", "status", "description", "municipality", "bathrooms", "bedrooms", "parkingSpots", "floors"];
     for (const field of requiredFields) {
       if (!formattedProperty[field]) {
@@ -140,9 +160,9 @@ const AddPropertyScreen = () => {
           floors: "",
           isApartment: false,
           floorNmr: "",
-          latitud: "", //revisar
-          longitud: "", //revisar
-          zone: "", //revisar
+          latitud: "",
+          longitud: "",
+          zone: "",
           images: [
             "https://firebasestorage.googleapis.com/v0/b/autenticadordev.appspot.com/o/PropertiesImages%2Fcasa1.jpg?alt=media&token=171adc53-466e-44cc-9493-50cea330f588",
           ],

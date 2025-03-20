@@ -135,6 +135,9 @@ const EditPropertyScreen = ({ route, navigation }) => {
       <TextInput style={styles.input} placeholder="Baños" keyboardType="numeric" value={String(property.bathrooms)} onChangeText={(text) => handleChange("bathrooms", text)} />
       <TextInput style={styles.input} placeholder="Habitaciones" keyboardType="numeric" value={String(property.bedrooms)} onChangeText={(text) => handleChange("bedrooms", text)} />
       <TextInput style={styles.input} placeholder="Puestos de estacionamiento" keyboardType="numeric" value={String(property.parkingSpots)} onChangeText={(text) => handleChange("parkingSpots", text)} />
+      <TextInput style={styles.input} placeholder="Latitud" keyboardType="default" value={String(property.latitud)} onChangeText={(text) => handleChange("latitud", text)} />
+      <TextInput style={styles.input} placeholder="Longitud" keyboardType="default" value={String(property.longitud)} onChangeText={(text) => handleChange("longitud", text)} />
+
 
       <TouchableOpacity style={styles.saveButton} onPress={handleUpdate} disabled={loading}>
         <Text style={styles.saveButtonText}>
