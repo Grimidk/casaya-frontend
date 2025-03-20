@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
-import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList, Button, SafeAreaView, StatusBar } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios"; 
@@ -48,8 +48,33 @@ const Dropdown = ({ label, items, onSelect }) => {
   );
 };
 
-const AddPropertyScreen = () => {
+const AddPropertyScreen = ({ navigation }) => {
   const { user } = useContext(UserContext); // Obtener usuario desde el contexto
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Define isLoggedIn state
+  const [isGuest, setIsGuest] = useState(false); // Define isGuest state
+  const [userId, setUserId] = useState(null); // Nuevo estado para manejar el userId
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const auxUserId = await AsyncStorage.getItem("userId");
+        setUserId(auxUserId);
+
+        if (!auxUserId || auxUserId === "null") {
+          setIsLoggedIn(false);
+          setIsGuest(true);
+          return;
+        }
+
+        setIsLoggedIn(true);
+        setIsGuest(false);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+    loadUserData();
+  }, [user]);
+
   const [property, setProperty] = useState({
     name: "",
     price: "",
@@ -69,21 +94,6 @@ const AddPropertyScreen = () => {
       "https://firebasestorage.googleapis.com/v0/b/autenticadordev.appspot.com/o/PropertiesImages%2Fcasa1.jpg?alt=media&token=171adc53-466e-44cc-9493-50cea330f588",
     ],
   });
-
-  const [userId, setUserId] = useState(null); // Nuevo estado para manejar el userId
-
-  useEffect(() => {
-    const fetchUserId = async () => {
-      // Intentar recuperar el ID del usuario desde AsyncStorage
-      const storedUserId = await AsyncStorage.getItem('userId');
-      if (storedUserId) {
-        setUserId(storedUserId); // Guardamos el userId si está disponible
-      } else if (user) {
-        setUserId(user.user_id); // Si está en el contexto, lo asignamos directamente
-      }
-    };
-    fetchUserId();
-  }, [user]);
 
   const handleChange = (field, value) => {
     setProperty({ ...property, [field]: value });
@@ -175,6 +185,38 @@ const AddPropertyScreen = () => {
       Alert.alert("Error", "No se pudo guardar la propiedad. Inténtalo de nuevo más tarde.");
     }
   };
+
+   if (!isLoggedIn && isGuest) {
+       return (
+         <SafeAreaView style={styles.safeArea}>
+           <StatusBar backgroundColor="#A95534" />
+           <View style={styles.centeredContainer}>
+             <Text style={styles.errorMessage}>Estás en modo invitado</Text>
+             <Button
+               title="Ir a Iniciar Sesión"
+               onPress={() => navigation.navigate("LoginScreen")}
+               color="#A95534"
+             />
+           </View>
+         </SafeAreaView>
+       );
+     }
+   
+     if (!isLoggedIn && isGuest) {
+       return (
+         <SafeAreaView style={styles.safeArea}>
+           <StatusBar backgroundColor="#A95534" />
+           <View style={styles.centeredContainer}>
+             <Text style={styles.errorMessage}>Debes iniciar sesión primero</Text>
+             <Button
+               title="Ir a Iniciar Sesión"
+               onPress={() => navigation.navigate("LoginScreen")}
+               color="#A95534"
+             />
+           </View>
+         </SafeAreaView>
+       );
+    }
 
   return (
     <ScrollView style={styles.container}>
@@ -274,6 +316,20 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: "#fff",
     fontSize: 18,
+  },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorMessage: {
+    fontSize: 18,
+    color: "#A95534",
+    marginBottom: 20,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
   },
 });
 

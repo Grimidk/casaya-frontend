@@ -108,7 +108,7 @@ const UserProfile = () => {
     );
   }
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn && isGuest) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <StatusBar backgroundColor="#A95534" />

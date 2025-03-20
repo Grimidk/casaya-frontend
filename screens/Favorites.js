@@ -6,16 +6,43 @@ import {
   SafeAreaView,
   StatusBar,
   ScrollView,
+  Button
 } from "react-native";
 import axios from 'axios';
 import PropertyCard from '../components/PropertyCard';
 import { UserContext } from '../context/UserContext'; 
 import { useContext } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Favorites({ navigation }) {
   const [favoriteProperties, setFavoriteProperties] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const { user } = useContext(UserContext); 
+  const [storedUserId, setStoredUserId] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const auxUserId = await AsyncStorage.getItem("userId");
+        setStoredUserId(auxUserId);
+
+        if (!auxUserId || auxUserId === "null") {
+          setIsLoggedIn(false);
+          setIsGuest(true);
+          return;
+        }
+
+        setIsLoggedIn(true);
+        setIsGuest(false);
+
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+    loadUserData();
+  }, []);
 
   useEffect(() => {
     const fetchFavoriteProperties = async () => {
@@ -53,6 +80,38 @@ export default function Favorites({ navigation }) {
 
     fetchFavoriteProperties();
   }, [user]); 
+
+  if (!isLoggedIn && isGuest) {
+      return (
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar backgroundColor="#A95534" />
+          <View style={styles.centeredContainer}>
+            <Text style={styles.errorMessage}>Estás en modo invitado</Text>
+            <Button
+              title="Ir a Iniciar Sesión"
+              onPress={() => navigation.navigate("LoginScreen")}
+              color="#A95534"
+            />
+          </View>
+        </SafeAreaView>
+      );
+    }
+  
+    if (!isLoggedIn && isGuest) {
+      return (
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar backgroundColor="#A95534" />
+          <View style={styles.centeredContainer}>
+            <Text style={styles.errorMessage}>Debes iniciar sesión primero</Text>
+            <Button
+              title="Ir a Iniciar Sesión"
+              onPress={() => navigation.navigate("LoginScreen")}
+              color="#A95534"
+            />
+          </View>
+        </SafeAreaView>
+      );
+    }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -100,5 +159,19 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingHorizontal: 20,
+  },
+  centeredContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorMessage: {
+    fontSize: 18,
+    color: "#A95534",
+    marginBottom: 20,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
   },
 });
