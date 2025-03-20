@@ -407,6 +407,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     borderRadius: 15,
     padding: 5,
+  },
   centeredContainer: {
     flex: 1,
     justifyContent: "center",
