@@ -151,6 +151,7 @@ const EditPropertyScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    marginTop:40
   },
   title: {
     fontSize: 24,
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee",
   },
   saveButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#58A9FF",
     padding: 12,
     borderRadius: 5,
     alignItems: "center",

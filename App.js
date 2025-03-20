@@ -84,7 +84,7 @@ function MyTabs() {
     >
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Favorites" component={FavoritesStack} />
-      <Tab.Screen name="Upload" component={Upload} />
+      <Tab.Screen name="Upload" component={UploadStack} />
       <Tab.Screen name="Perfil" component={UserProfile} /> 
     </Tab.Navigator>
   );
@@ -110,6 +110,26 @@ function FavoritesStack() {
   );
 }
 
+function UploadStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: '#A95534',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
+      <Stack.Screen name="Agregar propiedad" component={Upload} options={{ title: 'Agregar propiedad' , headerLeft:null, gestureEnabled:false}} />
+      <Stack.Screen name="Detalles" component={Detalles} />
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <UserProvider>
@@ -121,6 +141,7 @@ export default function App() {
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="Edit" component={Edit}/>
+          <Stack.Screen name="Upload" component={UploadStack}/>
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>

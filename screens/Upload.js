@@ -178,7 +178,7 @@ const AddPropertyScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Agregar Nueva Propiedad</Text>
+      <Text style={styles.title}>Ingresa los datos</Text>
 
       <TextInput style={styles.input} placeholder="Nombre" value={property.name} onChangeText={(text) => handleChange("name", text)} />
       <TextInput style={styles.input} placeholder="Precio" keyboardType="numeric" value={property.price} onChangeText={(text) => handleChange("price", text)} />
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   saveButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: '#58A9FF',
     padding: 12,
     borderRadius: 5,
     alignItems: "center",

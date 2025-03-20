@@ -62,7 +62,6 @@ export default function Favorites({ navigation }) {
         <Text>Cargando propiedades favoritas...</Text>
       ) : (
         <>
-          <Text style={styles.result}> {favoriteProperties.length} Propiedades Favoritas</Text>
           <ScrollView>
             <View style={styles.container}>
               {favoriteProperties.map((property) => (
