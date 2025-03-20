@@ -14,7 +14,7 @@ import Favorites from './screens/Favorites';
 import Upload from './screens/Upload';
 import LoginScreen from './screens/LoginScreen';
 import Edit from './screens/Edit';
-import UserProfileAux from './screens/userProfileAux';
+import UserProfileAux from './screens/UserProfileAux';
 import { UserContext, UserProvider } from './context/UserContext';
 import { View } from 'react-native';
 import RegisterScreen from './screens/RegisterScreen';

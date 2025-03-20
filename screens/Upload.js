@@ -1,28 +1,28 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
-import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios"; 
 import { UserContext } from "../context/UserContext"; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebaseConfig"; 
 
 const Dropdown = ({ label, items, onSelect }) => {
   const [expanded, setExpanded] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(""); // Estado para el valor seleccionado
+  const [selectedValue, setSelectedValue] = useState("");
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded]);
-  
 
   const handleSelect = (value) => {
-    setSelectedValue(value); // Actualizar el valor seleccionado
-    onSelect(value); // Llamar la función onSelect pasada desde el componente padre
-    setExpanded(false); // Cerrar el dropdown
+    setSelectedValue(value);
+    onSelect(value);
+    setExpanded(false);
   };
 
   return (
     <View>
       <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={toggleExpanded}>
-        <Text style={styles.text}>{selectedValue || label}</Text> {/* Mostrar el valor seleccionado o el label */}
+        <Text style={styles.text}>{selectedValue || label}</Text>
         <AntDesign name={expanded ? "caretup" : "caretdown"} size={16} />
       </TouchableOpacity>
       {expanded && (
@@ -49,7 +49,7 @@ const Dropdown = ({ label, items, onSelect }) => {
 };
 
 const AddPropertyScreen = () => {
-  const { user } = useContext(UserContext); // Obtener usuario desde el contexto
+  const { user } = useContext(UserContext);
   const [property, setProperty] = useState({
     name: "",
     price: "",
@@ -65,21 +65,19 @@ const AddPropertyScreen = () => {
     floorNmr: "",
     latitud: 0,
     longitud: 0,
-    images: [
-      "https://firebasestorage.googleapis.com/v0/b/autenticadordev.appspot.com/o/PropertiesImages%2Fcasa1.jpg?alt=media&token=171adc53-466e-44cc-9493-50cea330f588",
-    ],
+    images: [],
   });
 
-  const [userId, setUserId] = useState(null); // Nuevo estado para manejar el userId
+  const [userId, setUserId] = useState(null);
+  const [selectedImages, setSelectedImages] = useState([]); // Local state for image preview
 
   useEffect(() => {
     const fetchUserId = async () => {
-      // Intentar recuperar el ID del usuario desde AsyncStorage
       const storedUserId = await AsyncStorage.getItem('userId');
       if (storedUserId) {
-        setUserId(storedUserId); // Guardamos el userId si está disponible
+        setUserId(storedUserId);
       } else if (user) {
-        setUserId(user.user_id); // Si está en el contexto, lo asignamos directamente
+        setUserId(user.user_id);
       }
     };
     fetchUserId();
@@ -89,13 +87,60 @@ const AddPropertyScreen = () => {
     setProperty({ ...property, [field]: value });
   };
 
+  // Function to pick images from gallery
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      Alert.alert("Permiso denegado", "Se necesitan permisos para acceder a la galería.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const newImage = { uri: result.assets[0].uri, name: `image_${Date.now()}.jpg` };
+      setSelectedImages([...selectedImages, newImage]);
+    }
+  };
+
+  // Function to delete an image
+  const deleteImage = (index) => {
+    const updatedImages = selectedImages.filter((_, i) => i !== index);
+    setSelectedImages(updatedImages);
+  };
+
+  // Function to upload image to Firebase
+  const uploadImage = async (fileUri, fileName) => {
+    try {
+      const response = await fetch(fileUri);
+      const blob = await response.blob();
+      const storageRef = ref(storage, `PropertiesImages/${fileName}`);
+      await uploadBytes(storageRef, blob);
+      const downloadURL = await getDownloadURL(storageRef);
+      return downloadURL;
+    } catch (error) {
+      console.error("Error al subir la imagen:", error);
+      return null;
+    }
+  };
+
   const handleSave = async () => {
     if (!userId) {
       Alert.alert("Error", "No se ha podido identificar al usuario.");
       return;
     }
 
-    // Convertir valores numéricos antes de enviarlos
+    // Upload images to Firebase and get URLs
+    const uploadedImageURLs = [];
+    for (const image of selectedImages) {
+      const url = await uploadImage(image.uri, image.name);
+      if (url) uploadedImageURLs.push(url);
+    }
+
     const formattedProperty = {
       ...property,
       price: Number(property.price),
@@ -104,12 +149,12 @@ const AddPropertyScreen = () => {
       parkingSpots: Number(property.parkingSpots),
       floors: Number(property.floors),
       floorNmr: Number(property.floorNmr),
-      latitud: "0", //revisar
-      longitud: "0", //revisar
-      zone: "xxxxx" //revisar
+      latitud: "0",
+      longitud: "0",
+      zone: "xxxxx",
+      images: uploadedImageURLs.length > 0 ? uploadedImageURLs : property.images,
     };
 
-    // Validar que los campos requeridos no estén vacíos
     const requiredFields = ["name", "price", "status", "description", "municipality", "bathrooms", "bedrooms", "parkingSpots", "floors"];
     for (const field of requiredFields) {
       if (!formattedProperty[field]) {
@@ -140,13 +185,12 @@ const AddPropertyScreen = () => {
           floors: "",
           isApartment: false,
           floorNmr: "",
-          latitud: "", //revisar
-          longitud: "", //revisar
-          zone: "", //revisar
-          images: [
-            "https://firebasestorage.googleapis.com/v0/b/autenticadordev.appspot.com/o/PropertiesImages%2Fcasa1.jpg?alt=media&token=171adc53-466e-44cc-9493-50cea330f588",
-          ],
+          latitud: "",
+          longitud: "",
+          zone: "",
+          images: [],
         });
+        setSelectedImages([]); // Reset selected images
       } else {
         Alert.alert("Error", "No se pudo guardar la propiedad.");
       }
@@ -193,6 +237,31 @@ const AddPropertyScreen = () => {
       <TextInput style={styles.input} placeholder="Puestos de estacionamiento" keyboardType="numeric" value={property.parkingSpots} onChangeText={(text) => handleChange("parkingSpots", text)} />
       <TextInput style={styles.input} placeholder="Número de pisos" keyboardType="numeric" value={property.floors} onChangeText={(text) => handleChange("floors", text)} />
 
+      {/* Image Picker Button */}
+      <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+        <Text style={styles.imageButtonText}>Seleccionar Imágenes</Text>
+      </TouchableOpacity>
+
+      {/* Image Preview */}
+      {selectedImages.length > 0 && (
+        <FlatList
+          horizontal
+          data={selectedImages}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: item.uri }} style={styles.previewImage} />
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => deleteImage(index)}
+              >
+                <AntDesign name="delete" size={20} color="red" />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      )}
+
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Guardar Propiedad</Text>
       </TouchableOpacity>
@@ -208,6 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    marginTop:60,
   },
   input: {
     height: 40,
@@ -246,14 +316,44 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   saveButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#A95534",
     padding: 12,
     borderRadius: 5,
     alignItems: "center",
+    marginTop: 16,
   },
   saveButtonText: {
     color: "#fff",
     fontSize: 18,
+  },
+  imageButton: {
+    backgroundColor: "#A95534",
+    padding: 12,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  imageButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  imageContainer: {
+    position: "relative",
+    marginRight: 10,
+    marginBottom: 16,
+  },
+  previewImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    borderRadius: 15,
+    padding: 5,
   },
 });
 
