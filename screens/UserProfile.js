@@ -70,6 +70,7 @@ const UserProfile = () => {
       const response = await axios.get(
         `https://casaya-back-backup-production.up.railway.app/users/${userId}`
       );
+      console.log(userId)
       return response.data;
     } catch (error) {
       console.error("Error al obtener datos del usuario:", error);
