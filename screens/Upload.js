@@ -141,6 +141,28 @@ const AddPropertyScreen = () => {
       if (url) uploadedImageURLs.push(url);
     }
 
+    let latitud = "0";
+    let longitud = "0";
+
+    if (property.municipality === "libertador") {
+      latitud = "10.48801";
+      longitud = "-66.87919";
+    } else if (property.municipality === "baruta") {
+      latitud = "10.42971";
+      longitud = "-66.87088";
+    } else if (property.municipality === "chacao") {
+      latitud = "10.49606";
+      longitud = "-66.85312";
+    } else if (property.municipality === "el_hatillo") {
+      latitud = "10.42472";
+      longitud = "-66.83096";
+    } else if (property.municipality === "sucre") {
+      latitud = "10.49596";
+      longitud = "-66.81827";
+    } else {
+    }
+
+    // Convert values to numbers before sending
     const formattedProperty = {
       ...property,
       price: Number(property.price),
@@ -149,10 +171,9 @@ const AddPropertyScreen = () => {
       parkingSpots: Number(property.parkingSpots),
       floors: Number(property.floors),
       floorNmr: Number(property.floorNmr),
-      latitud: "0",
-      longitud: "0",
+      latitud,
+      longitud,
       zone: "xxxxx",
-      images: uploadedImageURLs.length > 0 ? uploadedImageURLs : property.images,
     };
 
     const requiredFields = ["name", "price", "status", "description", "municipality", "bathrooms", "bedrooms", "parkingSpots", "floors"];
@@ -200,9 +221,41 @@ const AddPropertyScreen = () => {
     }
   };
 
+   if (!isLoggedIn && isGuest) {
+       return (
+         <SafeAreaView style={styles.safeArea}>
+           <StatusBar backgroundColor="#A95534" />
+           <View style={styles.centeredContainer}>
+             <Text style={styles.errorMessage}>Estás en modo invitado</Text>
+             <Button
+               title="Ir a Iniciar Sesión"
+               onPress={() => navigation.navigate("LoginScreen")}
+               color="#A95534"
+             />
+           </View>
+         </SafeAreaView>
+       );
+     }
+   
+     if (!isLoggedIn && isGuest) {
+       return (
+         <SafeAreaView style={styles.safeArea}>
+           <StatusBar backgroundColor="#A95534" />
+           <View style={styles.centeredContainer}>
+             <Text style={styles.errorMessage}>Debes iniciar sesión primero</Text>
+             <Button
+               title="Ir a Iniciar Sesión"
+               onPress={() => navigation.navigate("LoginScreen")}
+               color="#A95534"
+             />
+           </View>
+         </SafeAreaView>
+       );
+    }
+
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Agregar Nueva Propiedad</Text>
+      <Text style={styles.title}>Ingresa los datos</Text>
 
       <TextInput style={styles.input} placeholder="Nombre" value={property.name} onChangeText={(text) => handleChange("name", text)} />
       <TextInput style={styles.input} placeholder="Precio" keyboardType="numeric" value={property.price} onChangeText={(text) => handleChange("price", text)} />
@@ -354,6 +407,19 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     borderRadius: 15,
     padding: 5,
+  centeredContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorMessage: {
+    fontSize: 18,
+    color: "#A95534",
+    marginBottom: 20,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
   },
 });
 

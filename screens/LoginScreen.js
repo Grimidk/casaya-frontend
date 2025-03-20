@@ -11,6 +11,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { Icon } from '@rneui/themed';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../context/UserContext';
 
@@ -45,7 +46,12 @@ const LoginScreen = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()} // Navegar hacia atrás
         >
-          <Text style={styles.backButton}>Atrás</Text>
+          <Icon 
+                    name="arrow-back" 
+                    type="material" 
+                    size={24} 
+                    color="black" 
+                  />
         </TouchableOpacity>
         <Image source={require('../assets/logo.png')} style={styles.logo} />
         <Text style={styles.welcomeText}>Iniciar Sesión</Text>

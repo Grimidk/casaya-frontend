@@ -1,133 +1,177 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  Text,
+  StyleSheet,
+  View,
+  SafeAreaView,
+  StatusBar,
+  ScrollView,
+  Button
+} from "react-native";
 import axios from 'axios';
-import { getUserId } from "../screens/utils"; 
+import PropertyCard from '../components/PropertyCard';
+import { UserContext } from '../context/UserContext'; 
+import { useContext } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const FavoritesScreen = ({ navigation }) => {
-  const [properties, setProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function Favorites({ navigation }) {
+  const [favoriteProperties, setFavoriteProperties] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const { user } = useContext(UserContext); 
+  const [storedUserId, setStoredUserId] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
 
-  // Función para cargar las propiedades favoritas
-  const fetchFavorites = async () => {
-    try {
-      // Obtener el userId desde AsyncStorage
-      const userId = await getUserId();
-      if (!userId) {
-        Alert.alert("Error", "No se pudo cargar el userId.");
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const auxUserId = await AsyncStorage.getItem("userId");
+        setStoredUserId(auxUserId);
+
+        if (!auxUserId || auxUserId === "null") {
+          setIsLoggedIn(false);
+          setIsGuest(true);
+          return;
+        }
+
+        setIsLoggedIn(true);
+        setIsGuest(false);
+
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+    loadUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchFavoriteProperties = async () => {
+      if (!user) {
         setLoading(false);
         return;
       }
 
-      // Obtener el array de propertyId desde la API de favoritos
-      const favoritesResponse = await axios.get(`https://casaya-back-backup-production.up.railway.app/favorites/${userId}`);
-      const favoritePropertyIds = favoritesResponse.data; // Suponemos que devuelve un array de IDs
+      try {
+        //lista de favoritos del usuario
+        const userResponse = await axios.get(
+          `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}`
+        );
+        const favorites = userResponse.data.bookmarks; // Lista de IDs de propiedades favoritas
 
-      // Mapea cada propertyId para obtener los detalles de las propiedades
-      const propertiesData = await Promise.all(
-        favoritePropertyIds.map(async (propertyId) => {
-          const propertyResponse = await axios.get(`https://casaya-back-backup-production.up.railway.app/properties/${propertyId}`);
-          return propertyResponse.data; // Datos de la propiedad
-        })
+      
+        const propertiesResponse = await axios.get(
+          'https://casaya-back-backup-production.up.railway.app/properties/'
+        );
+        const allProperties = propertiesResponse.data;
+
+        // Filtrar las propiedadrs
+        const filteredProperties = allProperties.filter(property =>
+          favorites.includes(property.property_id)
+        );
+
+        //Actualizar el estao
+        setFavoriteProperties(filteredProperties);
+      } catch (error) {
+        console.error("Error fetching favorite properties:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavoriteProperties();
+  }, [user]); 
+
+  if (!isLoggedIn && isGuest) {
+      return (
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar backgroundColor="#A95534" />
+          <View style={styles.centeredContainer}>
+            <Text style={styles.errorMessage}>Estás en modo invitado</Text>
+            <Button
+              title="Ir a Iniciar Sesión"
+              onPress={() => navigation.navigate("LoginScreen")}
+              color="#A95534"
+            />
+          </View>
+        </SafeAreaView>
       );
-
-      // Actualiza el estado con los detalles de las propiedades
-      setProperties(propertiesData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error al cargar los favoritos:", error);
-      Alert.alert("Error", "Ocurrió un problema al cargar los favoritos.");
-      setLoading(false);
     }
-  };
-
-  // Llama a fetchFavorites al montar el componente
-  useEffect(() => {
-    fetchFavorites();
-  }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Cargando favoritos...</Text>
-      </View>
-    );
-  }
+  
+    if (!isLoggedIn && isGuest) {
+      return (
+        <SafeAreaView style={styles.safeArea}>
+          <StatusBar backgroundColor="#A95534" />
+          <View style={styles.centeredContainer}>
+            <Text style={styles.errorMessage}>Debes iniciar sesión primero</Text>
+            <Button
+              title="Ir a Iniciar Sesión"
+              onPress={() => navigation.navigate("LoginScreen")}
+              color="#A95534"
+            />
+          </View>
+        </SafeAreaView>
+      );
+    }
 
   return (
-    <View style={styles.container}>
-      {properties.length === 0 ? (
-        <Text style={styles.emptyText}>No tienes favoritos todavía</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <StatusBar translucent={false} backgroundColor={"#fff"} barStyle={"dark-content"} />
+
+      {loading ? (
+        <Text>Cargando propiedades favoritas...</Text>
       ) : (
-        <FlatList
-          data={properties}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Detalles', { property: item })}
-              style={styles.propertyItem}
-            >
-              <Image source={{ uri: item.image }} style={styles.image} />
-              <View style={styles.infoContainer}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.location}>{item.location}</Text>
-                <Text style={styles.price}>{item.price}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+        <>
+          <ScrollView>
+            <View style={styles.container}>
+              {favoriteProperties.map((property) => (
+                <PropertyCard
+                  key={property.property_id}
+                  image={{ uri: property.images[0] }}
+                  title={property.name}
+                  price={property.price}
+                  reviews={property.reviews}
+                  status={property.status}
+                  onPress={() => {
+                    navigation.navigate('Detalles', {
+                      property: property,
+                      userPhone: property.user.phone,
+                      userId: property.user.user_id,
+                      latitud: property.latitud,
+                      longitud: property.longitud
+                    });
+                  }}
+                />
+              ))}
+            </View>
+          </ScrollView>
+        </>
       )}
-    </View>
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  loadingText: {
-    flex: 1,
-    textAlign: 'center',
-    textAlignVertical: 'center',
+  result: {
     fontSize: 18,
-    color: '#888',
-  },
-  emptyText: {
-    flex: 1,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    fontSize: 18,
-    color: '#888',
-  },
-  propertyItem: {
-    flexDirection: 'row',
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginHorizontal: 10,
-  },
-  image: {
-    width: 100,
-    height: 100,
-  },
-  infoContainer: {
-    flex: 1,
-    padding: 10,
-  },
-  title: {
-    fontSize: 16,
     fontWeight: 'bold',
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
-  location: {
-    fontSize: 14,
-    color: '#666',
+  container: {
+    paddingHorizontal: 20,
   },
-  price: {
-    fontSize: 14,
-    color: '#444',
+  centeredContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorMessage: {
+    fontSize: 18,
+    color: "#A95534",
+    marginBottom: 20,
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "white",
   },
 });
-
-export default FavoritesScreen;

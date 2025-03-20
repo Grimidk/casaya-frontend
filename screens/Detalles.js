@@ -1,16 +1,64 @@
-import React, { useState, useContext, useEffect  } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Text, StyleSheet, View, StatusBar, SafeAreaView, ImageBackground, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../context/UserContext';
 import axios from 'axios';
+import MapView, { Marker } from 'react-native-maps';
+
 export default function Detalles({ route }) {
-  const { property, userPhone, userId, latitud, longitud } = route.params; 
+  const { property, userPhone, userId, latitud: initialLatitud, longitud: initialLongitud, municipio } = route.params;
   const navigation = useNavigation();
   const { user } = useContext(UserContext);
   const [liked, setLiked] = useState(false);
- 
-  // Llama a la función cuando la pantalla se carga o cuando el usuario cambia
+  const [latitud, setLatitud] = useState(initialLatitud);
+  const [longitud, setLongitud] = useState(initialLongitud);
+
+  useEffect(() => {
+    if (latitud === "0" && longitud === "0") {
+      placeholderCords(municipio);
+    }
+  }, [latitud, longitud, municipio]);
+
+  const placeholderCords = (municipality) => {
+    if (municipality == "libertador") {
+      setLatitud("10.48801");
+      setLongitud("-66.87919");
+    } else if (municipality == "baruta") {
+      setLatitud("10.42971");
+      setLongitud("-66.87088");
+    } else if (municipality == "chacao") {
+      setLatitud("10.49606");
+      setLongitud("-66.85312");
+    } else if (municipality == "el_hatillo") {
+      setLatitud("10.42472");
+      setLongitud("-66.83096");
+    } else if (municipality == "sucre") {
+      setLatitud("10.49596");
+      setLongitud("-66.81827");
+    } else {
+      setLatitud("10.49830");
+      setLongitud("-66.90130");
+    }
+  };
+
+  const checkIfPropertyIsLiked = async () => {
+    if (!user) {
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}`
+      );
+      const favorites = response.data.bookmarks;
+      const isPropertyLiked = favorites.includes(property.property_id);
+      setLiked(isPropertyLiked);
+    } catch (error) {
+      console.error('Error al verificar favoritos:', error);
+    }
+  };
+
   useEffect(() => {
     checkIfPropertyIsLiked();
   }, [user, property.property_id]);
@@ -18,25 +66,6 @@ export default function Detalles({ route }) {
   const openWhatsApp = () => {
     const url = 'https://wa.me/' + '+58' + userPhone;
     Linking.openURL(url).catch(err => console.error('Error al abrir WhatsApp', err));
-
-  };
-  const checkIfPropertyIsLiked = async () => {
-    if (!user) {
-      return; // Si no hay usuario, no hay nada que verificar
-    }
-  
-    try {
-      const response = await axios.get(
-        `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}`
-      );
-      const favorites = response.data.bookmarks; // Lista de propiedades favoritas
-      
-      const isPropertyLiked = favorites.includes(property.property_id); 
-      
-      setLiked(isPropertyLiked); // Actualiza el estado local
-    } catch (error) {
-      console.error('Error al verificar favoritos:', error);
-    }
   };
 
   const handleLike = async () => {
@@ -44,25 +73,21 @@ export default function Detalles({ route }) {
       Alert.alert('Error', 'Debes iniciar sesión para marcar esta propiedad como favorita.');
       return;
     }
-  
+
     try {
       let response;
-  
+
       if (liked) {
-        // Si ya está marcada como favorita, enviar una solicitud DELETE para quitarla
         response = await axios.delete(
           `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}/bookmark/${property.property_id}`
         );
       } else {
-        // Si no está marcada como favorita, enviar una solicitud PATCH para agregarla
         response = await axios.patch(
-          `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}/bookmark/${property.property_id}`
+          `https://casaya-back-backup-production.up.railway.app/users/${user.user_id}/bookmark/${property.property_id}`, 
         );
       }
-  
+
       if (response.status === 200) {
-        // Actualizar el estado local
-        console.log(user)
         setLiked(!liked);
         Alert.alert('Éxito', liked ? 'Propiedad quitada de favoritos.' : 'Propiedad agregada a favoritos.');
       }
@@ -77,80 +102,98 @@ export default function Detalles({ route }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+    <SafeAreaView style={styles.safeArea}>
       <StatusBar translucent backgroundColor="rgba(0,0,0,0)" />
-      <View style={{ height: 400 }}>
-        <ImageBackground source={{ uri: property.images[0] }} resizeMode="cover" style={{ height: 400 }}></ImageBackground>
+      <View style={styles.imageContainer}>
+        <ImageBackground source={{ uri: property.images[0] }} resizeMode="cover" style={styles.imageBackground} />
       </View>
       <ScrollView>
-        {/* Seccion de titulo */}
         <View style={styles.containerTitle}>
           <Text style={styles.textTitle}>{property.name}</Text>
           <Text style={styles.textTitle}>{property.price + "$"}</Text>
         </View>
 
-        {/* Seccion de subtitulo */}
         <View style={styles.containerSubtitle}>
           <View style={styles.location}>
-            
-            <Text style={{ color: 'slategray', fontSize: 15 }}>{property.location}</Text>
+            <Text style={styles.locationText}>{property.location}</Text>
           </View>
-
           <View style={styles.location}>
             <Icon name="star" type="font-awesome" size={20} color="#A95534" />
-            <Text style={{ color: 'slategray', fontSize: 15 }}>{property.reviews} Reviews</Text>
+            <Text style={styles.reviewsText}>{property.reviews} Reviews</Text>
           </View>
         </View>
 
-        {/* Seccion de iconos */}
         <View style={styles.contenedorIcons}>
           <View>
             <Icon name="bed" type="font-awesome" size={20} color={'gray'} />
-            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.bedrooms} </Text>
+            <Text style={styles.iconText}>{property.bedrooms}</Text>
           </View>
-
           <View>
             <Icon name="bath" type="font-awesome" size={20} color={'gray'} />
-            <Text style={{ color: 'slategray', fontSize: 15 }}>{property.bathrooms} </Text>
+            <Text style={styles.iconText}>{property.bathrooms}</Text>
           </View>
-
           <View>
             <Icon name="car" type="font-awesome" size={20} color={'gray'} />
-            <Text style={{ color: 'slategray', fontSize: 15 }}> {property.parkingSpots} </Text>
+            <Text style={styles.iconText}>{property.parkingSpots}</Text>
           </View>
         </View>
 
-        {/* Seccion descripcion */}
-        <View style={{ marginTop: 40, marginBottom: 40, paddingHorizontal: 20 }}>
-          <Text style={styles.description}>Reseña </Text>
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.description}>Reseña</Text>
           <Text style={styles.textDescription}>{property.description}</Text>
         </View>
 
-        <View style={{ alignItems: 'center', marginVertical: 20 }}>
+        <View style={styles.mapContainer}>
+          {latitud != "0" && longitud != "0" ? (
+            <MapView
+              style={styles.map}
+              region={{
+                latitude: parseFloat(latitud),
+                longitude: parseFloat(longitud),
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: parseFloat(latitud),
+                  longitude: parseFloat(longitud),
+                }}
+                title="Ubicación de la propiedad"
+                description="Esta es la ubicación de la propiedad"
+              />
+            </MapView>
+          ) : (
+            <Text style={styles.noLocationText}>
+              No se pudo cargar la ubicación de la propiedad.
+            </Text>
+          )}
+        </View>
+
+        <View style={styles.centeredContainer}>
           <TouchableOpacity style={styles.moreInfoButton} onPress={goToSellerProfile}>
-            <Text style={{ color: 'white', marginLeft: 10 }}>Perfil del vendedor</Text>
+            <Text style={styles.moreInfoButtonText}>Perfil del vendedor</Text>
           </TouchableOpacity>
         </View>
-        {/* Botón de "Me gusta" */}
-        <View style={{ alignItems: 'center', marginVertical: 20 }}>
+
+        <View style={styles.centeredContainer}>
           <TouchableOpacity style={styles.likeButton} onPress={handleLike}>
             <Icon
               name={liked ? 'bookmark' : 'bookmark-outline'}
               type="ionicon"
               size={20}
-              color={liked ? 'gray' : 'gray'}
+              color="gray"
             />
             <Text style={{ color: liked ? 'grey' : 'gray', marginLeft: 10 }}>
-              {liked ? 'Eliminar de gurdados' : 'Guardad Propiedad'}
+              {liked ? 'Eliminar de guardados' : 'Guardad Propiedad'}
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Sección de contacto por WhatsApp */}
-        <View style={{ alignItems: 'center', marginVertical: 20 }}>
+        <View style={styles.centeredContainer}>
           <TouchableOpacity style={styles.whatsappButton} onPress={openWhatsApp}>
             <Icon name="whatsapp" type="font-awesome" size={20} color="white" />
-            <Text style={{ color: 'white', marginLeft: 10 }}>Contactar por WhatsApp</Text>
+            <Text style={styles.whatsappButtonText}>Contactar por WhatsApp</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -159,6 +202,16 @@ export default function Detalles({ route }) {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  imageContainer: {
+    height: 400,
+  },
+  imageBackground: {
+    height: '100%',
+  },
   containerTitle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -181,11 +234,28 @@ const styles = StyleSheet.create({
   location: {
     flexDirection: 'row',
   },
+  locationText: {
+    color: 'slategray',
+    fontSize: 15,
+  },
+  reviewsText: {
+    color: 'slategray',
+    fontSize: 15,
+  },
   contenedorIcons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     marginTop: 45,
+  },
+  iconText: {
+    color: 'slategray',
+    fontSize: 15,
+  },
+  descriptionContainer: {
+    marginTop: 40,
+    marginBottom: 40,
+    paddingHorizontal: 20,
   },
   description: {
     fontWeight: 'bold',
@@ -196,27 +266,26 @@ const styles = StyleSheet.create({
     color: 'slategray',
     marginTop: 5,
   },
-  facilitiesContainer: {
-    paddingHorizontal: 20,
+  mapContainer: {
+    height: 150, 
+    width: '90%', 
+    alignSelf: 'center',
+    borderRadius: 10, 
+    overflow: 'hidden',
     marginVertical: 20,
+    borderWidth: 1,
+    borderColor: '#A95534',
   },
-  facilityItem: {
-    flexDirection: 'row',
+  map: {
+    flex: 1,
+  },
+  noLocationText: {
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  centeredContainer: {
     alignItems: 'center',
-    paddingVertical: 10,
-  },
-  facilityText: {
-    marginLeft: 10,
-    color: 'slategray',
-    fontSize: 15,
-  },
-  whatsappButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#25D366',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
+    marginVertical: 20,
   },
   moreInfoButton: {
     flexDirection: 'row',
@@ -226,6 +295,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
   },
+  moreInfoButtonText: {
+    color: 'white',
+    marginLeft: 10,
+  },
   likeButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -233,5 +306,21 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
+  },
+  likeButtonText: {
+    color: 'gray',
+    marginLeft: 10,
+  },
+  whatsappButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#25D366',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  whatsappButtonText: {
+    color: 'white',
+    marginLeft: 10,
   },
 });

@@ -43,11 +43,6 @@ const UserProfileAux = ({ route }) => {
     return response.data;
   };
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('userId');
-    navigation.navigate('LoginScreen');
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar backgroundColor="#A95534" />

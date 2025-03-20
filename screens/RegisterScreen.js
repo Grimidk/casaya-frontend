@@ -11,6 +11,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
+import { Icon } from '@rneui/themed';
 import axios from 'axios';
 
 const RegisterScreen = ({ navigation }) => {
@@ -88,7 +89,12 @@ const RegisterScreen = ({ navigation }) => {
                   style={styles.backButton}
                   onPress={() => navigation.goBack()} 
                 >
-                  <Text style={styles.backButton}>Atrás</Text>
+                  <Icon 
+                    name="arrow-back" 
+                    type="material" 
+                    size={24} 
+                    color="black" 
+                  />
                 </TouchableOpacity>
         <Image source={require('../assets/logo.png')} style={styles.logo} />
         <Text style={styles.title}>Registro</Text>
