@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
-import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList, Image } from "react-native";
+import { View, Text, TextInput, Alert, StyleSheet, ScrollView, TouchableOpacity, FlatList, Image, SafeAreaView, StatusBar, Button} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { AntDesign } from "@expo/vector-icons";
 import axios from "axios"; 
@@ -70,6 +70,7 @@ const AddPropertyScreen = () => {
 
   const [userId, setUserId] = useState(null);
   const [selectedImages, setSelectedImages] = useState([]); // Local state for image preview
+  const [storedUserId, setStoredUserId] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
 
@@ -84,6 +85,29 @@ const AddPropertyScreen = () => {
     };
     fetchUserId();
   }, [user]);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const auxUserId = await AsyncStorage.getItem("userId");
+        setStoredUserId(auxUserId);
+
+        if (!auxUserId || auxUserId === "null") {
+          setIsLoggedIn(false);
+          setIsGuest(true);
+          return;
+        }
+
+        setIsLoggedIn(true);
+        setIsGuest(false);
+
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+    loadUserData();
+  }, []);
+
 
   const handleChange = (field, value) => {
     setProperty({ ...property, [field]: value });
@@ -223,37 +247,37 @@ const AddPropertyScreen = () => {
     }
   };
 
-   if (!isLoggedIn && isGuest) {
-       return (
-         <SafeAreaView style={styles.safeArea}>
-           <StatusBar backgroundColor="#A95534" />
-           <View style={styles.centeredContainer}>
-             <Text style={styles.errorMessage}>Estás en modo invitado</Text>
-             <Button
-               title="Ir a Iniciar Sesión"
-               onPress={() => navigation.navigate("LoginScreen")}
-               color="#A95534"
-             />
-           </View>
-         </SafeAreaView>
-       );
-     }
-   
-     if (!isLoggedIn && isGuest) {
-       return (
-         <SafeAreaView style={styles.safeArea}>
-           <StatusBar backgroundColor="#A95534" />
-           <View style={styles.centeredContainer}>
-             <Text style={styles.errorMessage}>Debes iniciar sesión primero</Text>
-             <Button
-               title="Ir a Iniciar Sesión"
-               onPress={() => navigation.navigate("LoginScreen")}
-               color="#A95534"
-             />
-           </View>
-         </SafeAreaView>
-       );
-    }
+  if (!isLoggedIn && isGuest) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar backgroundColor="#A95534" />
+        <View style={styles.centeredContainer}>
+          <Text style={styles.errorMessage}>Estás en modo invitado</Text>
+          <Button
+            title="Ir a Iniciar Sesión"
+            onPress={() => navigation.navigate("LoginScreen")}
+            color="#A95534"
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!isLoggedIn && isGuest) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar backgroundColor="#A95534" />
+        <View style={styles.centeredContainer}>
+          <Text style={styles.errorMessage}>Debes iniciar sesión primero</Text>
+          <Button
+            title="Ir a Iniciar Sesión"
+            onPress={() => navigation.navigate("LoginScreen")}
+            color="#A95534"
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>

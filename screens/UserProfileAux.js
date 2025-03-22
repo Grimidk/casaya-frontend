@@ -82,7 +82,7 @@ const UserProfileAux = ({ route }) => {
                 <View style={styles.container}>
                   {propertyData.map((property) => (
                     <PropertyCard
-                      key={property.id}
+                      key={property.property_id}
                       image={{ uri: property.images[0] }}
                       title={property.name}
                       price={property.price}

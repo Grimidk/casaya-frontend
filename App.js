@@ -47,11 +47,6 @@ function HomeStack() {
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       <Stack.Screen name="Edit" component={Edit} /> 
       <Stack.Screen 
-        name="UserProfile" 
-        component={UserProfile} 
-        options={{ title: 'Perfil de Usuario' }}
-      />
-      <Stack.Screen 
         name="UserProfileAux" 
         component={UserProfileAux} 
         options={{ title: 'Perfil de Usuario' }}
@@ -85,7 +80,7 @@ function MyTabs() {
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Favorites" component={FavoritesStack} />
       <Tab.Screen name="Upload" component={UploadStack} />
-      <Tab.Screen name="Perfil" component={UserProfile} /> 
+      <Tab.Screen name="Perfil" component={UserStack} /> 
     </Tab.Navigator>
   );
 }
@@ -130,6 +125,27 @@ function UploadStack() {
   );
 }
 
+function UserStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: '#A95534',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      }}
+    >
+      <Stack.Screen name="Perfil" component={UserProfile} options={{ title: 'Perfil de Usuaruio' , headerLeft:null, gestureEnabled:false}} />
+      <Stack.Screen name="Detalles" component={Detalles} />
+      <Stack.Screen name="Edit" component={Edit}/>
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   return (
     <UserProvider>
@@ -142,6 +158,7 @@ export default function App() {
           <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="Edit" component={Edit}/>
           <Stack.Screen name="Upload" component={UploadStack}/>
+          <Stack.Screen name="UserProfile" component={UserStack} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>
